@@ -61,7 +61,7 @@ export default class Game {
   }
 
   playerTurn = () => {
-    window.addEventListener('keyup', this)
+    window.addEventListener('keydown', this)
   }
 
   handleEvent = (e: KeyboardEvent) => {
