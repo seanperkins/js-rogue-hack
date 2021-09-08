@@ -1,5 +1,5 @@
 import * as ROT from 'rot-js'
-import {BLACK, GREEN, YELLOW} from './constants/colors'
+import {BLACK, GREEN, LIGHT_GREEN, YELLOW} from './constants/colors'
 
 import Entity, {Actor} from './Entity'
 import TileSet from './TileSet'
@@ -9,6 +9,7 @@ export default class LevelMap {
   display: ROT.Display
   entities: Entity[]
   tiles: {[key: string]: number} = {}
+  exploredTiles: {[key: string]: boolean} = {}
   // Size of level
   width: number
   height: number
@@ -55,24 +56,20 @@ export default class LevelMap {
         x - this.cameraOffsetX,
         y - this.cameraOffsetY,
         tile === 1 ? '#' : 'ù',
-        GREEN,
+        this.exploredTiles[`${x},${y}`] ? GREEN : BLACK,
         BLACK,
       )
     })
-    fov.compute(
-      this.entities[0].x,
-      this.entities[0].y,
-      12,
-      (x, y, r, visibility) => {
-        this.display.drawOver(
-          x - this.cameraOffsetX,
-          y - this.cameraOffsetY,
-          null,
-          YELLOW,
-          null,
-        )
-      },
-    )
+    fov.compute(this.entities[0].x, this.entities[0].y, 10, (x, y) => {
+      this.exploredTiles[`${x},${y}`] = true
+      this.display.drawOver(
+        x - this.cameraOffsetX,
+        y - this.cameraOffsetY,
+        null,
+        LIGHT_GREEN,
+        null,
+      )
+    })
     this.displayFrame()
     this.entities.forEach((actor) => {
       this.display.drawOver(
@@ -85,6 +82,14 @@ export default class LevelMap {
     })
   }
   actors = (): Entity[] => this.entities.filter((e) => e instanceof Actor)
+
+  getBlockableTileAtLocation(x, y) {
+    const key = `${x},${y}`
+    if (this.tiles && key in this.tiles) {
+      return this.tiles[key] === 1
+    }
+    return false
+  }
 
   visbileTiles() {
     const tiles = {}

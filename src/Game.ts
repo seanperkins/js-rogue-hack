@@ -1,4 +1,5 @@
 import * as ROT from 'rot-js'
+import {MovementAction} from './actions'
 
 import {BLACK, GREEN} from './constants/colors'
 import {DIRECTION_KEY_MAP} from './constants/keyboard'
@@ -88,7 +89,8 @@ export default class Game {
     // @ts-ignore
     const new_y = this.player.y + diff[1]
     // @ts-ignore
-    this.player.move(diff[0], diff[1])
+    let a = new MovementAction(this.player, diff[0], diff[1])
+    a.perform()
 
     const newKey = new_x + ',' + new_y
     // @ts-ignore
