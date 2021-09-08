@@ -38,8 +38,8 @@ export default class Entity {
     }
   }
 
-  levelMap() {
-    return this.parent.levelMap()
+  get levelMap() {
+    return this.parent.levelMap
   }
 
   spawn(x: number, y: number, levelMap: LevelMap) {

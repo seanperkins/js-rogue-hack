@@ -29,7 +29,7 @@ export default class LevelMap {
 
     this.generate()
   }
-  levelMap() {
+  get levelMap() {
     return this
   }
   addEntity = (entity: Entity) => {
@@ -71,7 +71,7 @@ export default class LevelMap {
       )
     })
     this.displayFrame()
-    this.entities.forEach((actor) => {
+    this.actors.forEach((actor) => {
       this.display.drawOver(
         actor.x - this.cameraOffsetX,
         actor.y - this.cameraOffsetY,
@@ -81,7 +81,9 @@ export default class LevelMap {
       )
     })
   }
-  actors = (): Entity[] => this.entities.filter((e) => e instanceof Actor)
+  get actors(): Entity[] {
+    return this.entities.filter((e) => e instanceof Actor)
+  }
 
   getBlockableTileAtLocation(x, y) {
     const key = `${x},${y}`

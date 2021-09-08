@@ -45,13 +45,11 @@ export default class Game {
     canvas.style.maxHeight = windowHeight + 'px'
     canvas.style.float = 'left'
 
-    this.setUpMap()
-
     this.handlers[GameState.Start] = this.handleStartInput.bind(this)
     this.handlers[GameState.InGame] = this.handleInGameInput.bind(this)
 
+    this.setUpMap()
     this.levelMap.render()
-
     this.playerTurn()
   }
 

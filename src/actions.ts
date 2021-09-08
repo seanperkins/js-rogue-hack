@@ -22,7 +22,9 @@ export class ActionWithDirection extends Action {
     this.dy = dy
   }
 
-  destXY = () => [this.entity.x + this.dx, this.entity.y + this.dy]
+  get destXY() {
+    return [this.entity.x + this.dx, this.entity.y + this.dy]
+  }
 
   blockingEntity = () => {}
 
@@ -39,7 +41,7 @@ export class MovementAction extends ActionWithDirection {
   }
 
   perform = () => {
-    const [x, y] = this.destXY()
+    const [x, y] = this.destXY
 
     // TODO: check if the destination is within the map
     // TODO: check if the destination is blocked
@@ -48,7 +50,7 @@ export class MovementAction extends ActionWithDirection {
     this.entity.move(x, y)
     // TODO: Use better comparison to figure out if it is player
     if (this.entity.char === '@') {
-      this.entity.levelMap().centerOn(x, y)
+      this.entity.levelMap.centerOn(x, y)
     }
   }
 }
