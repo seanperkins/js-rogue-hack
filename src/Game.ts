@@ -22,11 +22,11 @@ export default class Game {
   constructor() {
     let tileset = new TileSet('tileset')
     this.display = new ROT.Display({
-      width: 100,
-      height: 50,
+      width: 120,
+      height: 80,
       fontSize: 12,
       spacing: 1,
-      layout: 'tile',
+      layout: 'tile-gl',
       tileColorize: true,
       tileWidth: tileset.tileWidth,
       tileHeight: tileset.tileHeight,
@@ -37,8 +37,12 @@ export default class Game {
     })
     // Appending element and forcing it to be 100% of width
     const canvas = this.display.getContainer()
-    document.body.appendChild(canvas)
+    const gameContainer = document.getElementById('game')
+    gameContainer.appendChild(canvas)
     canvas.style.maxWidth = '100%'
+    const windowHeight = window.innerHeight
+    canvas.style.maxHeight = windowHeight + 'px'
+    canvas.style.float = 'left'
 
     this.setUpMap()
 
@@ -51,9 +55,9 @@ export default class Game {
   }
 
   setUpMap = () => {
-    this.levelMap = new LevelMap(this.display, [])
+    this.levelMap = new LevelMap(this.display, 150, 150, [])
+
     this.player = new Player(20, 20, this.levelMap)
-    new Actor('T', GREEN, 'Troll', 10, 10, this.levelMap)
   }
 
   playerTurn = () => {
