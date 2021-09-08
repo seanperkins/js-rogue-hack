@@ -1,5 +1,5 @@
 import * as ROT from 'rot-js'
-import {BLACK, GREEN} from './constants/colors'
+import {BLACK, GREEN, YELLOW} from './constants/colors'
 
 import Entity, {Actor} from './Entity'
 import TileSet from './TileSet'
@@ -8,7 +8,7 @@ import chars from './constants/characters'
 export default class LevelMap {
   display: ROT.Display
   entities: Entity[]
-  tiles: {[key: string]: string} = {}
+  tiles: {[key: string]: number} = {}
   // Size of level
   width: number
   height: number
@@ -31,14 +31,22 @@ export default class LevelMap {
   levelMap() {
     return this
   }
-  addEntity(entity: Entity) {
+  addEntity = (entity: Entity) => {
     this.entities.push(entity)
   }
-  removeEntity(entity: Entity) {
+  removeEntity = (entity: Entity) => {
     this.entities = this.entities.filter((e) => e !== entity)
   }
-  render() {
+  isTransparent = (x, y) => {
+    const key = `${x},${y}`
+    if (this.tiles && key in this.tiles) {
+      return this.tiles[key] === 0
+    }
+    return false
+  }
+  render = () => {
     this.display.clear()
+    const fov = new ROT.FOV.PreciseShadowcasting(this.isTransparent)
     const visbileTiles = this.visbileTiles()
     Object.keys(visbileTiles).forEach((key) => {
       const [x, y] = key.split(',').map((n) => parseInt(n))
@@ -46,11 +54,25 @@ export default class LevelMap {
       this.display.draw(
         x - this.cameraOffsetX,
         y - this.cameraOffsetY,
-        tile,
+        tile === 1 ? '#' : 'ù',
         GREEN,
         BLACK,
       )
     })
+    fov.compute(
+      this.entities[0].x,
+      this.entities[0].y,
+      12,
+      (x, y, r, visibility) => {
+        this.display.drawOver(
+          x - this.cameraOffsetX,
+          y - this.cameraOffsetY,
+          null,
+          YELLOW,
+          null,
+        )
+      },
+    )
     this.displayFrame()
     this.entities.forEach((actor) => {
       this.display.drawOver(
@@ -131,7 +153,7 @@ export default class LevelMap {
       roomDugPercentage: 0.5,
     })
     map.create((x, y, value) => {
-      this.tiles[`${x},${y}`] = value === 1 ? '#' : '.'
+      this.tiles[`${x},${y}`] = value
     })
   }
 }
