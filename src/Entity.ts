@@ -63,6 +63,10 @@ export default class Entity {
     }
   }
 
+  distance(x: number, y: number) {
+    return Math.sqrt((x - this.x) ** 2 + (y - this.y) ** 2)
+  }
+
   move(dx: number, dy: number) {
     this.x = dx
     this.y = dy
@@ -70,6 +74,8 @@ export default class Entity {
 }
 
 export class Actor extends Entity {
+  ai: any
+
   constructor(
     char,
     color,
@@ -81,5 +87,10 @@ export class Actor extends Entity {
     renderOrder = RenderOrder.ACTOR,
   ) {
     super(char, color, name, x, y, parent, blocksMovement, renderOrder)
+  }
+
+  get isAlive() {
+    if (this.ai) return true
+    return false
   }
 }

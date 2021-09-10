@@ -54,9 +54,8 @@ export default class Game {
   }
 
   setUpMap = () => {
-    this.levelMap = new LevelMap(this.display, 150, 150, [])
-
     this.player = new Player(20, 20, this.levelMap)
+    this.levelMap = new LevelMap(this.display, 150, 150, [this.player])
   }
 
   playerTurn = () => {

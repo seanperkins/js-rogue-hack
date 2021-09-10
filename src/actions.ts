@@ -1,5 +1,5 @@
 import Entity from './Entity'
-import {NotImplementedError} from './Errors'
+import {ImpossibleError, NotImplementedError} from './Errors'
 
 export class Action {
   entity: Entity
@@ -43,8 +43,15 @@ export class MovementAction extends ActionWithDirection {
   perform = () => {
     const [x, y] = this.destXY
 
-    // TODO: check if the destination is within the map
-    // TODO: check if the destination is blocked
+    // Check if the destination is within the map
+    const tile = this.entity.levelMap.tiles[`${x},${y}`]
+    if (!tile) {
+      throw new ImpossibleError('Impossible to move off the map')
+    }
+    // Check if the destination is blocked by a tile
+    if (!tile.walkable) {
+      throw new ImpossibleError('Cannot move to blocked tile')
+    }
     // TODO: check if the destination is occupied by an actor
 
     this.entity.move(x, y)

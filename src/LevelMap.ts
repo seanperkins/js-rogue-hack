@@ -4,11 +4,13 @@ import {BLACK, GREEN, LIGHT_GREEN, YELLOW} from './constants/colors'
 import Entity, {Actor} from './Entity'
 import TileSet from './TileSet'
 import chars from './constants/characters'
+import {floor, SHROUD, wall} from './TileTypes'
+import Player from './Player'
 
 export default class LevelMap {
   display: ROT.Display
   entities: Entity[]
-  tiles: {[key: string]: number} = {}
+  tiles: {[key: string]: typeof wall | typeof floor} = {}
   exploredTiles: {[key: string]: boolean} = {}
   // Size of level
   width: number
@@ -41,33 +43,42 @@ export default class LevelMap {
   isTransparent = (x, y) => {
     const key = `${x},${y}`
     if (this.tiles && key in this.tiles) {
-      return this.tiles[key] === 0
+      return this.tiles[key]['transparent']
     }
-    return false
   }
   render = () => {
     this.display.clear()
     const fov = new ROT.FOV.PreciseShadowcasting(this.isTransparent)
-    const visbileTiles = this.visbileTiles()
-    Object.keys(visbileTiles).forEach((key) => {
+    Object.keys(this.tilesInFrame).forEach((key) => {
       const [x, y] = key.split(',').map((n) => parseInt(n))
       const tile = this.tiles[key]
-      this.display.draw(
-        x - this.cameraOffsetX,
-        y - this.cameraOffsetY,
-        tile === 1 ? '#' : 'ù',
-        this.exploredTiles[`${x},${y}`] ? GREEN : BLACK,
-        BLACK,
-      )
+      if (!this.exploredTiles[key]) {
+        this.display.draw(
+          x - this.cameraOffsetX,
+          y - this.cameraOffsetY,
+          SHROUD.ch,
+          SHROUD.fg,
+          SHROUD.bg,
+        )
+      } else {
+        this.display.draw(
+          x - this.cameraOffsetX,
+          y - this.cameraOffsetY,
+          tile.dark.ch,
+          tile.dark.fg,
+          tile.dark.bg,
+        )
+      }
     })
     fov.compute(this.entities[0].x, this.entities[0].y, 10, (x, y) => {
       this.exploredTiles[`${x},${y}`] = true
+      const tile = this.tiles[`${x},${y}`]
       this.display.drawOver(
         x - this.cameraOffsetX,
         y - this.cameraOffsetY,
-        null,
-        LIGHT_GREEN,
-        null,
+        tile.light.ch,
+        tile.light.fg,
+        tile.light.bg,
       )
     })
     this.displayFrame()
@@ -88,12 +99,12 @@ export default class LevelMap {
   getBlockableTileAtLocation(x, y) {
     const key = `${x},${y}`
     if (this.tiles && key in this.tiles) {
-      return this.tiles[key] === 1
+      return this.tiles[key]['walkable'] === false
     }
     return false
   }
 
-  visbileTiles() {
+  get tilesInFrame() {
     const tiles = {}
     for (
       let x = this.cameraOffsetX;
@@ -160,7 +171,11 @@ export default class LevelMap {
       roomDugPercentage: 0.5,
     })
     map.create((x, y, value) => {
-      this.tiles[`${x},${y}`] = value
+      this.tiles[`${x},${y}`] = value === 1 ? wall : floor
     })
+    const rooms = map.getRooms()
+    const center = rooms[rooms.length - 1].getCenter()
+    this.entities[0].place(center[0], center[1], this)
+    this.centerOn(center[0], center[1])
   }
 }
