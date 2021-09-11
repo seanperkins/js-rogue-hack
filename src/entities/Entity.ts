@@ -1,8 +1,8 @@
 import {cloneDeep} from 'lodash'
 
-import {BLACK} from './constants/colors'
-import RenderOrder from './constants/renderOrder'
-import LevelMap from './LevelMap'
+import {BLACK} from '../constants/colors'
+import RenderOrder from '../constants/renderOrder'
+import LevelMap from '../LevelMap'
 
 export default class Entity {
   char: string
@@ -70,27 +70,5 @@ export default class Entity {
   move(dx: number, dy: number) {
     this.x = dx
     this.y = dy
-  }
-}
-
-export class Actor extends Entity {
-  ai: any
-
-  constructor(
-    char,
-    color,
-    name,
-    x,
-    y,
-    parent,
-    blocksMovement = true,
-    renderOrder = RenderOrder.ACTOR,
-  ) {
-    super(char, color, name, x, y, parent, blocksMovement, renderOrder)
-  }
-
-  get isAlive() {
-    if (this.ai) return true
-    return false
   }
 }

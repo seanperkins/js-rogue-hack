@@ -1,8 +1,7 @@
 import * as ROT from 'rot-js'
 import {BLACK, GREEN, LIGHT_GREEN, YELLOW} from './constants/colors'
 
-import Entity, {Actor} from './Entity'
-import chars from './constants/characters'
+import {Entity, Actor} from './entities/'
 import {floor, SHROUD, wall} from './TileTypes'
 import {createProcessEnemy} from './factories/enemies'
 import {drawFrame} from './utilities/display'
