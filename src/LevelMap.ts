@@ -5,10 +5,12 @@ import {Entity, Actor} from './entities/'
 import {floor, SHROUD, wall} from './TileTypes'
 import {createProcessEnemy} from './factories/enemies'
 import {drawFrame} from './utilities/display'
+import {Terminal, terminalTypes, terminalWeights} from '@entities'
+import {RenderOrder} from '@constants'
 
 export default class LevelMap {
   display: ROT.Display
-  entities: Entity[]
+  entities: (Actor | Terminal | Entity)[]
   tiles: {[key: string]: typeof wall | typeof floor} = {}
   exploredTiles: {[key: string]: boolean} = {}
   currentlyVisibleTiles: {[key: string]: boolean} = {}
@@ -90,7 +92,7 @@ export default class LevelMap {
     drawFrame(this.display, this.cameraHeight, this.cameraWidth, 0, 0, 'MAP')
     // Display all actors that are in visible areas within the current frame
     // TODO: Draw all entities, after sorting them by their order
-    this.actors.forEach((actor) => {
+    this.entities.forEach((actor) => {
       if (
         !this.tilesInFrame[`${actor.x},${actor.y}`] ||
         !this.currentlyVisibleTiles[`${actor.x},${actor.y}`]
@@ -105,8 +107,17 @@ export default class LevelMap {
       )
     })
   }
+
   get actors(): Entity[] {
     return this.entities.filter((e) => e instanceof Actor)
+  }
+
+  get spawnPoints(): Terminal[] {
+    return this.entities.filter((e) => {
+      if (e instanceof Terminal && e.isNetworked) {
+        return e
+      }
+    }) as Terminal[]
   }
 
   // Returns the entity if it is there and blocks movement
@@ -173,13 +184,39 @@ export default class LevelMap {
     map.create((x, y, value) => {
       this.tiles[`${x},${y}`] = value === 1 ? wall : floor
     })
-    const rooms = map.getRooms()
+    const rooms = ROT.RNG.shuffle(map.getRooms())
+    const terminals = []
+
+    for (let i = 0; i < 10; i++) {
+      const terminalKey = ROT.RNG.getWeightedValue(terminalWeights)
+      const terminalType = terminalTypes[terminalKey]
+      const terminal = new Terminal(
+        'T',
+        LIGHT_GREEN,
+        terminalType.name,
+        0,
+        0,
+        this,
+        true,
+        RenderOrder.TERMINALS,
+        terminalType.networkSecurity,
+      )
+      terminals.push(terminal)
+    }
+
     rooms.forEach((room, i) => {
       if (i === rooms.length - 1) {
         return
       }
       const center = room.getCenter()
-      createProcessEnemy(center[0], center[1], this)
+      if (i < 5) {
+        const terminal = terminals[i]
+        terminal.x = center[0]
+        terminal.y = center[1]
+        this.entities.push(terminal)
+      } else {
+        createProcessEnemy(center[0], center[1], this)
+      }
     })
     const center = rooms[rooms.length - 1].getCenter()
     this.entities[0].place(center[0], center[1], this)

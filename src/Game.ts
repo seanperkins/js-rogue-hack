@@ -62,11 +62,11 @@ export default class Game {
 
   setUpMap = () => {
     this.player = new Player(20, 20, this.levelMap)
-    this.levelMap = new LevelMap(this.display, 150, 150, [this.player])
+    this.levelMap = new LevelMap(this.display, 100, 100, [this.player])
   }
 
   playerTurn = () => {
-    window.addEventListener('keydown', this)
+    window.addEventListener('keyup', this)
   }
 
   handleEvent = (e: KeyboardEvent) => {
@@ -107,6 +107,8 @@ export default class Game {
       this.errorHandler.handle(error)
     }
   }
+
+  handleSpawnInput = (e: KeyboardEvent) => {}
 
   get isDebug(): boolean {
     return process.env.NODE_ENV === 'development'

@@ -1,4 +1,8 @@
 export {default as Entity} from './Entity'
+export * from './Entity'
 export {default as Actor} from './Actor'
+export * from './Actor'
 export {default as Player} from './Player'
+export * from './Player'
 export {default as Terminal} from './Terminal'
+export * from './Terminal'
