@@ -1,7 +1,7 @@
 import {cloneDeep} from 'lodash'
 
-import {BLACK} from '../constants/colors'
-import RenderOrder from '../constants/renderOrder'
+import {BLACK} from '../constants'
+import {RenderOrder} from '../constants'
 import LevelMap from '../LevelMap'
 
 export default class Entity {

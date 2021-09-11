@@ -1,4 +1,4 @@
-import {LIGHT_GREEN} from '../constants/colors'
+import {LIGHT_GREEN} from '@constants'
 import {Actor} from './'
 import LevelMap from '../LevelMap'
 

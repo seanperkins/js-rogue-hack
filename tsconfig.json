@@ -3,6 +3,17 @@
     "target": "es2017",
     "module": "es6",
     "sourceMap": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
+      "@components": ["components/index"],
+      "@components/*": ["components/*"],
+      "@entities": ["entities/index"],
+      "@entities/*": ["entities/*"],
+      "@constants": ["constants/index"],
+      "@constants/*": ["constants/*"],
+      "@factories/*": ["factories/*"],
+      "@utilities/*": ["utilities/*"]
+    }
   }
 }

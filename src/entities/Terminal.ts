@@ -1,9 +1,9 @@
 import Entity from './Entity'
-import TeleportDestination from '../components/TeleportDestination'
+import {NetworkPort} from '@components/index'
 import RenderOrder from '../constants/renderOrder'
 
 export default class Terminal extends Entity {
-  teleporter?: TeleportDestination
+  networkPort?: NetworkPort
 
   constructor(
     char,
@@ -18,7 +18,7 @@ export default class Terminal extends Entity {
     super(char, color, name, x, y, parent, blocksMovement, renderOrder)
   }
 
-  get isTeleporter(): boolean {
-    return !!this.teleporter
+  get hasNetworkPort(): boolean {
+    return !!this.hasNetworkPort
   }
 }

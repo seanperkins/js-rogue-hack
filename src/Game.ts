@@ -1,8 +1,8 @@
 import * as ROT from 'rot-js'
 import {MovementAction} from './actions'
 
-import {BLACK, GREEN, LIGHT_GREEN} from './constants/colors'
-import {DIRECTION_KEY_MAP} from './constants/keyboard'
+import {BLACK, LIGHT_GREEN} from '@constants'
+import {DIRECTION_KEY_MAP} from '@constants'
 import LevelMap from './LevelMap'
 import {Player} from './entities/'
 import TileSet from './TileSet'
