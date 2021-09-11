@@ -110,6 +110,16 @@ export default class LevelMap {
     return this.entities.filter((e) => e instanceof Actor)
   }
 
+  // Returns the entity if it is there and blocks movement
+  getBlockableEntityAtLocation(x, y) {
+    const entity = this.entities.find((e) => e.x === x && e.y === y)
+    if (entity && entity.blocksMovement) {
+      return entity
+    } else {
+      return null
+    }
+  }
+
   getBlockableTileAtLocation(x, y) {
     const key = `${x},${y}`
     if (this.tiles && key in this.tiles) {

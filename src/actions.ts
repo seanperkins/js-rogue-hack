@@ -52,11 +52,14 @@ export class MovementAction extends ActionWithDirection {
     if (!tile.walkable) {
       throw new ImpossibleError('Cannot move to blocked tile')
     }
-    // TODO: check if the destination is occupied by an actor
+    // Check if the destination is occupied by an entity that we cannot move through
+    if (this.entity.levelMap.getBlockableEntityAtLocation(x, y)) {
+      throw new ImpossibleError('Cannot move to occupied tile')
+    }
 
     this.entity.move(x, y)
     // TODO: Use better comparison to figure out if it is player
-    if (this.entity.char === '@') {
+    if (this.entity.name === 'Player') {
       this.entity.levelMap.centerOn(x, y)
     }
   }
