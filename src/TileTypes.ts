@@ -36,8 +36,8 @@ export const SHROUD: GraphicTile = {
 export const floor = newTile(
   true,
   true,
-  {ch: '.', fg: GREEN, bg: BLACK},
-  {ch: '.', fg: LIGHT_GREEN, bg: BLACK},
+  {ch: 'ù', fg: GREEN, bg: BLACK},
+  {ch: 'ù', fg: LIGHT_GREEN, bg: BLACK},
 )
 
 export const wall = newTile(

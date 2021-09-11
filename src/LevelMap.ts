@@ -2,16 +2,16 @@ import * as ROT from 'rot-js'
 import {BLACK, GREEN, LIGHT_GREEN, YELLOW} from './constants/colors'
 
 import Entity, {Actor} from './Entity'
-import TileSet from './TileSet'
 import chars from './constants/characters'
 import {floor, SHROUD, wall} from './TileTypes'
-import Player from './Player'
+import {createProcessEnemy} from './factories/enemies'
 
 export default class LevelMap {
   display: ROT.Display
   entities: Entity[]
   tiles: {[key: string]: typeof wall | typeof floor} = {}
   exploredTiles: {[key: string]: boolean} = {}
+  currentlyVisibleTiles: {[key: string]: boolean} = {}
   // Size of level
   width: number
   height: number
@@ -46,13 +46,16 @@ export default class LevelMap {
       return this.tiles[key]['transparent']
     }
   }
+
   render = () => {
     this.display.clear()
+    this.currentlyVisibleTiles = {}
     const fov = new ROT.FOV.PreciseShadowcasting(this.isTransparent)
     Object.keys(this.tilesInFrame).forEach((key) => {
       const [x, y] = key.split(',').map((n) => parseInt(n))
       const tile = this.tiles[key]
       if (!this.exploredTiles[key]) {
+        // Tiles that are not explored use the SHROUD style
         this.display.draw(
           x - this.cameraOffsetX,
           y - this.cameraOffsetY,
@@ -61,6 +64,7 @@ export default class LevelMap {
           SHROUD.bg,
         )
       } else {
+        // If it has been explored we can draw it as the dark version because we are redrawing currently visible next
         this.display.draw(
           x - this.cameraOffsetX,
           y - this.cameraOffsetY,
@@ -70,8 +74,10 @@ export default class LevelMap {
         )
       }
     })
+    // Cacluaate FOV from players position
     fov.compute(this.entities[0].x, this.entities[0].y, 10, (x, y) => {
       this.exploredTiles[`${x},${y}`] = true
+      this.currentlyVisibleTiles[`${x},${y}`] = true
       const tile = this.tiles[`${x},${y}`]
       this.display.drawOver(
         x - this.cameraOffsetX,
@@ -81,8 +87,16 @@ export default class LevelMap {
         tile.light.bg,
       )
     })
+    // Displays the frame around the map
     this.displayFrame()
+    // Display all actors that are in visible areas within the current frame
+    // TODO: Draw all entities, after sorting them by their order
     this.actors.forEach((actor) => {
+      if (
+        !this.tilesInFrame[`${actor.x},${actor.y}`] ||
+        !this.currentlyVisibleTiles[`${actor.x},${actor.y}`]
+      )
+        return
       this.display.drawOver(
         actor.x - this.cameraOffsetX,
         actor.y - this.cameraOffsetY,
@@ -168,12 +182,21 @@ export default class LevelMap {
 
   generate() {
     const map = new ROT.Map.Uniform(this.width, this.height, {
+      roomWidth: [5, 15],
+      roomHeight: [5, 15],
       roomDugPercentage: 0.5,
     })
     map.create((x, y, value) => {
       this.tiles[`${x},${y}`] = value === 1 ? wall : floor
     })
     const rooms = map.getRooms()
+    rooms.forEach((room, i) => {
+      if (i === rooms.length - 1) {
+        return
+      }
+      const center = room.getCenter()
+      createProcessEnemy(center[0], center[1], this)
+    })
     const center = rooms[rooms.length - 1].getCenter()
     this.entities[0].place(center[0], center[1], this)
     this.centerOn(center[0], center[1])
