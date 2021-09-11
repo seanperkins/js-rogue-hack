@@ -5,6 +5,7 @@ import Entity, {Actor} from './Entity'
 import chars from './constants/characters'
 import {floor, SHROUD, wall} from './TileTypes'
 import {createProcessEnemy} from './factories/enemies'
+import {drawFrame} from './utilities/display'
 
 export default class LevelMap {
   display: ROT.Display
@@ -48,7 +49,6 @@ export default class LevelMap {
   }
 
   render = () => {
-    this.display.clear()
     this.currentlyVisibleTiles = {}
     const fov = new ROT.FOV.PreciseShadowcasting(this.isTransparent)
     Object.keys(this.tilesInFrame).forEach((key) => {
@@ -88,7 +88,7 @@ export default class LevelMap {
       )
     })
     // Displays the frame around the map
-    this.displayFrame()
+    drawFrame(this.display, this.cameraHeight, this.cameraWidth, 0, 0)
     // Display all actors that are in visible areas within the current frame
     // TODO: Draw all entities, after sorting them by their order
     this.actors.forEach((actor) => {
@@ -144,31 +144,6 @@ export default class LevelMap {
       }
     }
     return tiles
-  }
-
-  displayFrame() {
-    for (let x = 0; x < this.cameraWidth; x++) {
-      for (let y = 0; y < this.cameraHeight; y++) {
-        let char = ' '
-
-        if (x === 0 && y === 0) {
-          char = chars.upperLeftCorner // Upper left corner
-        } else if (x === this.cameraWidth - 1 && y === 0) {
-          char = chars.upperRightCorner // Upper right corner
-        } else if (x === 0 && y === this.cameraHeight - 1) {
-          char = chars.lowerLeftCorner // Lower left corner
-        } else if (x === this.cameraWidth - 1 && y === this.cameraHeight - 1) {
-          char = chars.lowerRightCorner // Lower right corner
-        } else if (x === 0 || x === this.cameraWidth - 1) {
-          char = chars.verticalLine // Vertical
-        } else if (y === 0 || y === this.cameraHeight - 1) {
-          char = chars.horizontalLine // Horizontal
-        }
-        if (char !== ' ') {
-          this.display.draw(x, y, char, GREEN, BLACK) // Side
-        }
-      }
-    }
   }
 
   centerOn(x, y) {

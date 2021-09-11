@@ -1,12 +1,14 @@
 import * as ROT from 'rot-js'
 import {MovementAction} from './actions'
 
-import {BLACK, GREEN} from './constants/colors'
+import {BLACK, GREEN, LIGHT_GREEN} from './constants/colors'
 import {DIRECTION_KEY_MAP} from './constants/keyboard'
 import {Actor} from './Entity'
 import LevelMap from './LevelMap'
 import Player from './Player'
 import TileSet from './TileSet'
+import Log from './Log'
+import {ErrorHandler} from './Errors'
 
 const enum GameState {
   'Start',
@@ -19,6 +21,8 @@ export default class Game {
   player: Player
   levelMap: LevelMap
   gameState: GameState = GameState.InGame
+  log: Log
+  errorHandler: ErrorHandler
 
   constructor() {
     let tileset = new TileSet('tileset')
@@ -34,8 +38,9 @@ export default class Game {
       tileSet: tileset.tileSet,
       tileMap: tileset.tileMap,
       bg: BLACK,
-      fg: GREEN,
+      fg: LIGHT_GREEN,
     })
+    this.log = new Log(this.display, 30, 80, 0, 50)
     // Appending element and forcing it to be 100% of width
     const canvas = this.display.getContainer()
     const gameContainer = document.getElementById('game')
@@ -44,6 +49,8 @@ export default class Game {
     const windowHeight = window.innerHeight
     canvas.style.maxHeight = windowHeight + 'px'
     canvas.style.float = 'left'
+
+    this.errorHandler = new ErrorHandler(this.log)
 
     this.handlers[GameState.Start] = this.handleStartInput.bind(this)
     this.handlers[GameState.InGame] = this.handleInGameInput.bind(this)
@@ -68,31 +75,36 @@ export default class Game {
     }
     this.display.clear()
     this.levelMap.render()
+    this.log.render()
   }
 
   handleStartInput = (e: KeyboardEvent) => {}
 
   handleInGameInput = (e: KeyboardEvent) => {
-    if (typeof this === 'undefined') return
-    const code = e.code
+    try {
+      if (typeof this === 'undefined') return
+      const code = e.code
 
-    if (!(code in DIRECTION_KEY_MAP)) {
-      return
-    }
+      if (!(code in DIRECTION_KEY_MAP)) {
+        return
+      }
 
-    const diff = ROT.DIRS[4][DIRECTION_KEY_MAP[code]]
-    // @ts-ignore
-    const new_x = this.player.x + diff[0]
-    // @ts-ignore
-    const new_y = this.player.y + diff[1]
-    // @ts-ignore
-    let a = new MovementAction(this.player, diff[0], diff[1])
-    a.perform()
+      const diff = ROT.DIRS[4][DIRECTION_KEY_MAP[code]]
+      // @ts-ignore
+      const new_x = this.player.x + diff[0]
+      // @ts-ignore
+      const new_y = this.player.y + diff[1]
+      // @ts-ignore
+      let a = new MovementAction(this.player, diff[0], diff[1])
+      a.perform()
 
-    const newKey = new_x + ',' + new_y
-    // @ts-ignore
-    if (!(newKey in this.levelMap)) {
-      return
+      const newKey = new_x + ',' + new_y
+      // @ts-ignore
+      if (!(newKey in this.levelMap)) {
+        return
+      }
+    } catch (error) {
+      this.errorHandler.handle(error)
     }
   }
 }
