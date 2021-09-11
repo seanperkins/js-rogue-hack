@@ -7,6 +7,7 @@ type MessageType = 'error' | 'into'
 type Message = {
   text: string
   type: MessageType
+  count: number
 }
 
 export default class Log {
@@ -26,10 +27,18 @@ export default class Log {
   }
 
   add(text: string, type: MessageType = 'into') {
-    this.messages.push({
-      text,
-      type,
-    })
+    const lastMessage =
+      this.messages[this.messages.length - 1] || ({} as Message)
+    // If the previous message is the same, increase the count
+    if (lastMessage.text === text) {
+      lastMessage.count++
+    } else {
+      this.messages.push({
+        text,
+        type,
+        count: 1,
+      })
+    }
   }
 
   render() {
@@ -40,10 +49,15 @@ export default class Log {
     let totalLines = 0
     let i = 0
     while (totalLines < height - 2 && i < height - 2 && i < msgs.length) {
+      let text = msgs[i].text
+      // Display the count if it's greater than 1
+      if (msgs[i].count > 1) {
+        text += ` (${msgs[i].count})`
+      }
       const linesDrawn = display.drawText(
         x + 1,
         y + 1 + totalLines,
-        msgs[i].text,
+        text,
         width,
       )
       totalLines += linesDrawn
