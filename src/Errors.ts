@@ -2,9 +2,9 @@ import Log from './Log'
 
 export class ErrorHandler {
   log: Log
-  constructor(log) {
+  constructor(log, isDebug = false) {
     this.log = log
-    if (log.isDebug) {
+    if (isDebug) {
       window.onerror = this.handleUnhandledError
     }
   }

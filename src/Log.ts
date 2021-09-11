@@ -35,7 +35,7 @@ export default class Log {
   render() {
     const {height, width, x, y, messages, display} = this
     clearDisplay(display, height, width, x, y)
-    drawFrame(display, height, width, x, y)
+    drawFrame(display, height, width, x, y, 'LOG')
     let msgs = reverse(messages.slice())
     let totalLines = 0
     let i = 0
@@ -49,9 +49,5 @@ export default class Log {
       totalLines += linesDrawn
       i++
     }
-  }
-
-  get isDebug(): boolean {
-    return process.env.NODE_ENV === 'development'
   }
 }

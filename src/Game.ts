@@ -50,13 +50,14 @@ export default class Game {
     canvas.style.maxHeight = windowHeight + 'px'
     canvas.style.float = 'left'
 
-    this.errorHandler = new ErrorHandler(this.log)
+    this.errorHandler = new ErrorHandler(this.log, this.isDebug)
 
     this.handlers[GameState.Start] = this.handleStartInput.bind(this)
     this.handlers[GameState.InGame] = this.handleInGameInput.bind(this)
 
     this.setUpMap()
     this.levelMap.render()
+    this.log.render()
     this.playerTurn()
   }
 
@@ -106,5 +107,9 @@ export default class Game {
     } catch (error) {
       this.errorHandler.handle(error)
     }
+  }
+
+  get isDebug(): boolean {
+    return process.env.NODE_ENV === 'development'
   }
 }

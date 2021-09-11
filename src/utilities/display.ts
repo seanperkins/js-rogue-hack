@@ -23,6 +23,7 @@ export function drawFrame(
   width: number,
   x: number = 0,
   y: number = 0,
+  title: string = '',
 ) {
   for (let w = 0; w < width; w++) {
     for (let h = 0; h < height; h++) {
@@ -46,4 +47,5 @@ export function drawFrame(
       }
     }
   }
+  display.drawText(x + 1, y, title)
 }

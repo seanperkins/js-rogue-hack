@@ -88,7 +88,7 @@ export default class LevelMap {
       )
     })
     // Displays the frame around the map
-    drawFrame(this.display, this.cameraHeight, this.cameraWidth, 0, 0)
+    drawFrame(this.display, this.cameraHeight, this.cameraWidth, 0, 0, 'MAP')
     // Display all actors that are in visible areas within the current frame
     // TODO: Draw all entities, after sorting them by their order
     this.actors.forEach((actor) => {
