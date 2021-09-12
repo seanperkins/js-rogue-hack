@@ -13,6 +13,7 @@ export default class Entity {
   parent?: LevelMap
   blocksMovement?: boolean
   renderOrder?: RenderOrder
+  faction: string
 
   constructor(
     char = '?',
@@ -23,6 +24,7 @@ export default class Entity {
     parent,
     blocksMovement = true,
     renderOrder = RenderOrder.CORPSE,
+    faction = 'neutral',
   ) {
     this.x = x
     this.y = y
@@ -31,6 +33,7 @@ export default class Entity {
     this.name = name
     this.blocksMovement = blocksMovement
     this.renderOrder = renderOrder
+    this.faction = faction
 
     if (parent) {
       this.parent = parent
@@ -40,6 +43,10 @@ export default class Entity {
 
   get levelMap() {
     return this.parent.levelMap
+  }
+
+  get belongsToPlayerFaction() {
+    return this.faction === 'player'
   }
 
   spawn(x: number, y: number, levelMap: LevelMap) {
@@ -70,5 +77,9 @@ export default class Entity {
   move(dx: number, dy: number) {
     this.x = dx
     this.y = dy
+  }
+
+  getClosestPlayerActor() {
+    return this.levelMap.getClosestPlayerActor(this.x, this.y)
   }
 }

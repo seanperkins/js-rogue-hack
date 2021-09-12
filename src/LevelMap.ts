@@ -120,6 +120,29 @@ export default class LevelMap {
     }) as Terminal[]
   }
 
+  /**
+   * getClosestPlayerActor - returns the closest actor in the player's faction
+   * @param x
+   * @param y
+   * @returns actor
+   */
+  getClosestPlayerActor(x, y) {
+    const actors = this.actors
+    const distances = actors.map((actor) => {
+      if (!actor.belongsToPlayerFaction) return
+      return {
+        actor,
+        distance: Math.sqrt(
+          Math.pow(actor.x - x, 2) + Math.pow(actor.y - y, 2),
+        ),
+      }
+    })
+    const sorted = distances.sort((a, b) => {
+      return a.distance - b.distance
+    })
+    return sorted[0].actor
+  }
+
   // Returns the entity if it is there and blocks movement
   getBlockingEntityAtLocation(x, y) {
     const entity = this.entities.find((e) => e.x === x && e.y === y)
@@ -140,6 +163,14 @@ export default class LevelMap {
   }
 
   getBlockableTileAtLocation(x, y) {
+    const key = `${x},${y}`
+    if (this.tiles && key in this.tiles) {
+      return this.tiles[key]['walkable'] === false
+    }
+    return false
+  }
+
+  checkCellForBlocking(x, y) {
     const key = `${x},${y}`
     if (this.tiles && key in this.tiles) {
       return this.tiles[key]['walkable'] === false

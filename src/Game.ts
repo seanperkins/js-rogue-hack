@@ -12,6 +12,7 @@ import {ErrorHandler} from './Errors'
 const enum GameState {
   'Start',
   'InGame',
+  'Spawn',
 }
 
 export default class Game {
@@ -53,6 +54,7 @@ export default class Game {
 
     this.handlers[GameState.Start] = this.handleStartInput.bind(this)
     this.handlers[GameState.InGame] = this.handleInGameInput.bind(this)
+    this.handlers[GameState.Spawn] = this.handleSpawnInput.bind(this)
 
     this.setUpMap()
     this.levelMap.render()
