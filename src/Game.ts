@@ -1,7 +1,7 @@
 import * as ROT from 'rot-js'
 import {MovementAction} from './actions'
 
-import {BLACK, LIGHT_GREEN} from '@constants'
+import {BLACK, LIGHT_GREEN, NUMBER_KEY_MAP} from '@constants'
 import {DIRECTION_KEY_MAP} from '@constants'
 import LevelMap from './LevelMap'
 import {Player} from './entities/'
@@ -23,6 +23,8 @@ export default class Game {
   gameState: GameState = GameState.InGame
   log: Log
   errorHandler: ErrorHandler
+  engine: ROT.Engine
+  scheduler: any
 
   constructor() {
     let tileset = new TileSet('tileset')
@@ -56,18 +58,35 @@ export default class Game {
     this.handlers[GameState.InGame] = this.handleInGameInput.bind(this)
     this.handlers[GameState.Spawn] = this.handleSpawnInput.bind(this)
 
+    this.scheduler = new ROT.Scheduler.Speed()
+    this.engine = new ROT.Engine(this.scheduler)
+
     this.setUpMap()
     this.levelMap.render()
     this.log.render()
+
     this.playerTurn()
   }
 
   setUpMap = () => {
     this.player = new Player(20, 20, this.levelMap)
-    this.levelMap = new LevelMap(this.display, 100, 100, [this.player])
+    this.levelMap = new LevelMap(
+      {
+        game: this,
+        display: this.display,
+        engine: this.engine,
+        scheduler: this.scheduler,
+      },
+      {
+        width: 100,
+        height: 100,
+        entities: [this.player],
+      },
+    )
   }
 
   playerTurn = () => {
+    this.engine.lock()
     window.addEventListener('keyup', this)
   }
 
@@ -96,21 +115,34 @@ export default class Game {
       const new_x = this.player.x + diff[0]
       // @ts-ignore
       const new_y = this.player.y + diff[1]
-      // @ts-ignore
-      let a = new MovementAction(this.player, diff[0], diff[1])
-      a.perform()
 
       const newKey = new_x + ',' + new_y
       // @ts-ignore
       if (!(newKey in this.levelMap)) {
         return
       }
+      // @ts-ignore
+      let a = new MovementAction(this.player, diff[0], diff[1])
+      a.perform()
+      // If action is successful, start engine again
+      this.engine.unlock()
     } catch (error) {
       this.errorHandler.handle(error)
     }
   }
 
-  handleSpawnInput = (e: KeyboardEvent) => {}
+  handleSpawnInput = (e: KeyboardEvent) => {
+    try {
+      if (typeof this === 'undefined') return
+      const code = e.code
+
+      if (!(code in NUMBER_KEY_MAP)) {
+        return
+      }
+
+      const number = NUMBER_KEY_MAP[code]
+    } catch (error) {}
+  }
 
   get isDebug(): boolean {
     return process.env.NODE_ENV === 'development'

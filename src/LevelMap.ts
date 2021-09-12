@@ -7,29 +7,40 @@ import {createProcessEnemy} from './factories/enemies'
 import {drawFrame} from './utilities/display'
 import {Terminal, terminalTypes, terminalWeights} from '@entities'
 import {RenderOrder} from '@constants'
+import Game from './Game'
+import {GameStuff, LevelConfig} from 'types'
 
 export default class LevelMap {
+  game: Game
+  engine: ROT.Engine
+  scheduler: any
   display: ROT.Display
   entities: (Actor | Terminal | Entity)[]
+
   tiles: {[key: string]: typeof wall | typeof floor} = {}
   exploredTiles: {[key: string]: boolean} = {}
   currentlyVisibleTiles: {[key: string]: boolean} = {}
+
   // Size of level
   width: number
   height: number
+
   // Camera stuff
   cameraHeight: number
   cameraWidth: number
   cameraOffsetX: number = 0
   cameraOffsetY: number = 0
 
-  constructor(display, width, height, entities: Entity[] = []) {
-    this.display = display
-    this.entities = entities
-    this.width = width
-    this.height = height
-    this.cameraHeight = 50
-    this.cameraWidth = 80
+  constructor(gameStuff: GameStuff, levelConfig: LevelConfig) {
+    this.game = gameStuff.game
+    this.display = gameStuff.display
+
+    this.entities = levelConfig.entities
+    this.width = levelConfig.width
+    this.height = levelConfig.height
+
+    this.cameraHeight = levelConfig.cameraHeight || 50
+    this.cameraWidth = levelConfig.cameraHeight || 80
 
     this.generate()
   }
@@ -38,9 +49,16 @@ export default class LevelMap {
   }
   addEntity = (entity: Entity) => {
     this.entities.push(entity)
+    // Actors should get added to the scheduler
+    if (entity instanceof Actor) {
+      this.scheduler.add(entity, true)
+    }
   }
   removeEntity = (entity: Entity) => {
     this.entities = this.entities.filter((e) => e !== entity)
+    if (entity instanceof Actor) {
+      this.scheduler.remove(entity)
+    }
   }
   isTransparent = (x, y) => {
     const key = `${x},${y}`
