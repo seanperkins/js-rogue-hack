@@ -26,9 +26,15 @@ export class ActionWithDirection extends Action {
     return [this.entity.x + this.dx, this.entity.y + this.dy]
   }
 
-  blockingEntity = () => {}
+  blockingEntity = () => {
+    const [x, y] = this.destXY
+    return this.entity.levelMap.getBlockingEntityAtLocation(x, y)
+  }
 
-  targetActor = () => {}
+  targetActor = () => {
+    const [x, y] = this.destXY
+    return this.entity.levelMap.getActorAtLocation(x, y)
+  }
 
   perform = (): void => {
     throw new NotImplementedError('Not implemented')
@@ -53,7 +59,7 @@ export class MovementAction extends ActionWithDirection {
       throw new ImpossibleError('Cannot move to blocked tile')
     }
     // Check if the destination is occupied by an entity that we cannot move through
-    if (this.entity.levelMap.getBlockableEntityAtLocation(x, y)) {
+    if (this.entity.levelMap.getBlockingEntityAtLocation(x, y)) {
       throw new ImpossibleError('Cannot move to occupied tile')
     }
 

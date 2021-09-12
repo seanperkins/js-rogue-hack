@@ -121,10 +121,19 @@ export default class LevelMap {
   }
 
   // Returns the entity if it is there and blocks movement
-  getBlockableEntityAtLocation(x, y) {
+  getBlockingEntityAtLocation(x, y) {
     const entity = this.entities.find((e) => e.x === x && e.y === y)
     if (entity && entity.blocksMovement) {
       return entity
+    } else {
+      return null
+    }
+  }
+
+  getActorAtLocation(x, y) {
+    const actor = this.actors.find((e) => e.x === x && e.y === y)
+    if (actor) {
+      return actor
     } else {
       return null
     }
