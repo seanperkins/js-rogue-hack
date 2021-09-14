@@ -2,6 +2,23 @@ import {Display} from 'rot-js'
 import chars from '../constants/characters'
 import {BLACK, LIGHT_GREEN} from '../constants/colors'
 
+/**
+ * Get x, y coordinates for the top left corner of a centered rectangle or the center of the display
+ * @param display - ROTJS Display object
+ * @param height - Height of the rectangle you want to center
+ * @param width - Width of the rectangle you want to center
+ * @returns The `{x, y}` coordinates for the top left corner of the centered rectangle
+ */
+export function getCenter(display: Display, height?: number, width?: number) {
+  const {width: dw, height: dh} = display.getOptions()
+  const h = height || 0
+  const w = width || 0
+  return {
+    x: Math.floor(dw / 2 - w / 2),
+    y: Math.floor(dh / 2 - h / 2),
+  }
+}
+
 // Clears the portion of the screen that matches the parameters
 export function clearDisplay(
   display: Display,

@@ -33,7 +33,7 @@ export default class Game {
       width: 120,
       height: 80,
       fontSize: 12,
-      spacing: 1,
+      spacing: 0,
       layout: 'tile-gl',
       tileColorize: true,
       tileWidth: tileset.tileWidth,
@@ -68,6 +68,8 @@ export default class Game {
     return this._gameState
   }
 
+  // TODO: Switch this back to a function that can accept gameState and props/context
+  // This way, we can pass something into the new screen
   set gameState(gameState: GameState) {
     this._gameState = gameState
     if (this.screen) {

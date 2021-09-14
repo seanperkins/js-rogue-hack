@@ -1,20 +1,22 @@
 import {BLACK, LIGHT_GREEN} from '@constants'
-import {drawFrame, drawText, drawWindow} from '../utilities/display'
+import {drawFrame, drawText, drawWindow, getCenter} from '../utilities/display'
 import * as ROT from 'rot-js'
 
 import Screen from './Screen'
 import {GameState} from 'Game'
+import {Button, UIComponent} from '../utilities/ui'
 
 export default class StartScreen extends Screen {
   display: ROT.Display
   selectedOption: number = 0
+  components: UIComponent[] = []
   options: {[option: string]: any}[] = [
     {
-      text: 'New Game',
+      text: 'NEW GAME',
       callback: this.newGame.bind(this),
     },
     {
-      text: 'Load Game',
+      text: 'LOAD GAME',
       callback: this.loadGame.bind(this),
     },
   ]
@@ -30,28 +32,31 @@ export default class StartScreen extends Screen {
   }
 
   render() {
-    const halfWidth = this.display.getOptions().width / 2
-    const halfHeight = this.display.getOptions().height / 2
+    this.components.forEach((component) => component.destroy())
+    const {x, y} = getCenter(this.display, 40, 40)
 
     const inner = drawWindow({
       display: this.display,
       h: 40,
       w: 40,
-      x: halfWidth - 20,
-      y: halfHeight - 20,
+      x,
+      y,
       title: 'GAME MENU',
       shadow: true,
     })
 
     this.options.forEach((option, index) => {
-      drawText({
+      const button = new Button({
         display: this.display,
         x: inner.x + 1,
         y: inner.y + 1 + index * 2,
         text: option.text,
-        fg: index === this.selectedOption ? BLACK : LIGHT_GREEN,
-        bg: index === this.selectedOption ? LIGHT_GREEN : BLACK,
+        fg: LIGHT_GREEN,
+        bg: BLACK,
+        onClick: option.callback,
+        selected: index === this.selectedOption,
       })
+      this.components.push(button)
     })
   }
 
@@ -81,6 +86,7 @@ export default class StartScreen extends Screen {
     } else if (code === 'Enter') {
       this.options[this.selectedOption].callback()
     }
+    this.components.forEach((component) => component.draw())
   }
 
   destroy() {
