@@ -32,6 +32,7 @@ export default class StartScreen extends Screen {
   render() {
     const halfWidth = this.display.getOptions().width / 2
     const halfHeight = this.display.getOptions().height / 2
+
     const inner = drawWindow({
       display: this.display,
       h: 40,
@@ -80,7 +81,6 @@ export default class StartScreen extends Screen {
     } else if (code === 'Enter') {
       this.options[this.selectedOption].callback()
     }
-    console.log(this.selectedOption)
   }
 
   destroy() {

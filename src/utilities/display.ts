@@ -116,6 +116,16 @@ export function drawWindow({
   const height = shadow ? h - 1 : h
   const width = shadow ? w - 1 : w
 
+  fillDisplay({
+    display,
+    h: h - 1,
+    w: w - 1,
+    x,
+    y,
+    fg: BLACK,
+    bg: BLACK,
+    char: ' ',
+  })
   drawFrame(display, height, width, x, y)
   fillDisplay({
     display,
