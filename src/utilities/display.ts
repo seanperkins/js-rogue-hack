@@ -22,8 +22,8 @@ export function getCenter(display: Display, height?: number, width?: number) {
 // Clears the portion of the screen that matches the parameters
 export function clearDisplay(
   display: Display,
-  height: number,
-  width: number,
+  height: number = display.getOptions().height,
+  width: number = display.getOptions().width,
   x: number = 0,
   y: number = 0,
 ) {

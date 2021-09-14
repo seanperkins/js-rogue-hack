@@ -80,7 +80,7 @@ export class UIComponent {
   }
 
   destroy() {
-    window.removeEventListener('mousemove', this.onHover)
+    window.removeEventListener('mousemove', this.debouncedOnHover)
     window.removeEventListener('click', this.onClick)
   }
 }

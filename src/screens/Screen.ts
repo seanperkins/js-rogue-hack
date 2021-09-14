@@ -1,3 +1,5 @@
+import {clearDisplay} from '../utilities/display'
+import {UIComponent} from '../utilities/ui'
 import {NotImplementedError} from '../Errors'
 import Game from '../Game'
 
@@ -7,19 +9,11 @@ export default class Screen {
 
   [key: string]: any
 
+  components: UIComponent[] = []
+
   constructor(game: Game, name: string) {
     this.game = game
     this.name = name
-
-    this.init()
-  }
-
-  /**
-   * init - Called when the screen is first created
-   * @returns {void}
-   */
-  init() {
-    throw new NotImplementedError(`Init not implemented on ${this.name} screen`)
   }
 
   /**
@@ -47,9 +41,7 @@ export default class Screen {
    * @returns {void}
    */
   render() {
-    throw new NotImplementedError(
-      `Render not implemented on ${this.name} screen`,
-    )
+    this.components.forEach((component) => component.destroy())
   }
 
   /**
@@ -57,8 +49,7 @@ export default class Screen {
    * @returns {void}
    */
   destroy() {
-    throw new NotImplementedError(
-      `Destroy not implemented on ${this.name} screen`,
-    )
+    this.components.forEach((component) => component.destroy())
+    clearDisplay(this.game.display)
   }
 }

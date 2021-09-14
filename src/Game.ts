@@ -7,15 +7,18 @@ import Log from './Log'
 import {ErrorHandler} from './Errors'
 import StartScreen from './screens/StartScreen'
 import Screen from './screens/Screen'
+import Welcome from './screens/Welcome'
 
 export const enum GameState {
   'Start',
+  'Welcome',
   'InGame',
   'Spawn',
 }
 
 const screens = {
   [GameState.Start]: StartScreen,
+  [GameState.Welcome]: Welcome,
 }
 
 export default class Game {

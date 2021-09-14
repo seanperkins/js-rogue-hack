@@ -9,7 +9,6 @@ import {Button, UIComponent} from '../utilities/ui'
 export default class StartScreen extends Screen {
   display: ROT.Display
   selectedOption: number = 0
-  components: UIComponent[] = []
   options: {[option: string]: any}[] = [
     {
       text: 'NEW GAME',
@@ -27,12 +26,8 @@ export default class StartScreen extends Screen {
     this.display = game.display
   }
 
-  init() {
-    console.log('Start screen init')
-  }
-
   render() {
-    this.components.forEach((component) => component.destroy())
+    super.render()
     const {x, y} = getCenter(this.display, 40, 40)
 
     const inner = drawWindow({
@@ -61,7 +56,7 @@ export default class StartScreen extends Screen {
   }
 
   newGame() {
-    this.game.gameState = GameState.InGame
+    this.game.gameState = GameState.Welcome
   }
 
   loadGame() {
@@ -90,6 +85,7 @@ export default class StartScreen extends Screen {
   }
 
   destroy() {
+    super.destroy()
     console.log('Start screen destroy')
   }
 }
