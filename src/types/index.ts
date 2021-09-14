@@ -5,8 +5,6 @@ import {Entity} from '@entities'
 
 export interface GameStuff {
   game: Game
-  engine: ROT.Engine
-  scheduler: any
   display: ROT.Display
 }
 

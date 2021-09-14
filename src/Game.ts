@@ -1,30 +1,31 @@
 import * as ROT from 'rot-js'
-import {MovementAction} from './actions'
 
 import {BLACK, LIGHT_GREEN, NUMBER_KEY_MAP} from '@constants'
-import {DIRECTION_KEY_MAP} from '@constants'
-import LevelMap from './LevelMap'
 import {Player} from './entities/'
 import TileSet from './TileSet'
 import Log from './Log'
 import {ErrorHandler} from './Errors'
+import StartScreen from './screens/StartScreen'
+import Screen from './screens/Screen'
 
-const enum GameState {
+export const enum GameState {
   'Start',
   'InGame',
   'Spawn',
+}
+
+const screens = {
+  [GameState.Start]: StartScreen,
 }
 
 export default class Game {
   display: ROT.Display
   handlers: {[id: number]: (e: KeyboardEvent) => void} = {}
   player: Player
-  levelMap: LevelMap
-  gameState: GameState = GameState.InGame
+  _gameState: GameState
   log: Log
   errorHandler: ErrorHandler
-  engine: ROT.Engine
-  scheduler: any
+  screen: Screen
 
   constructor() {
     let tileset = new TileSet('tileset')
@@ -54,94 +55,36 @@ export default class Game {
 
     this.errorHandler = new ErrorHandler(this.log, this.isDebug)
 
-    this.handlers[GameState.Start] = this.handleStartInput.bind(this)
-    this.handlers[GameState.InGame] = this.handleInGameInput.bind(this)
-    this.handlers[GameState.Spawn] = this.handleSpawnInput.bind(this)
+    this.setHandlers()
 
-    this.scheduler = new ROT.Scheduler.Speed()
-    this.engine = new ROT.Engine(this.scheduler)
-
-    this.setUpMap()
-    this.levelMap.render()
-    this.log.render()
-
-    this.playerTurn()
+    this.gameState = GameState.Start
   }
 
-  setUpMap = () => {
-    this.player = new Player(20, 20, this.levelMap)
-    this.levelMap = new LevelMap(
-      {
-        game: this,
-        display: this.display,
-        engine: this.engine,
-        scheduler: this.scheduler,
-      },
-      {
-        width: 100,
-        height: 100,
-        entities: [this.player],
-      },
-    )
+  setHandlers() {
+    window.addEventListener('keydown', this.mainEventHandler.bind(this))
   }
 
-  playerTurn = () => {
-    this.engine.lock()
-    window.addEventListener('keyup', this)
+  get gameState(): GameState {
+    return this._gameState
   }
 
-  handleEvent = (e: KeyboardEvent) => {
-    if (this.gameState in this.handlers) {
-      this.handlers[this.gameState](e)
+  set gameState(gameState: GameState) {
+    this._gameState = gameState
+    if (this.screen) {
+      this.screen.destroy()
     }
-    this.display.clear()
-    this.levelMap.render()
-    this.log.render()
+    const screen = screens[this.gameState]
+    this.screen = new screen(this)
+    this.screen.render()
   }
 
-  handleStartInput = (e: KeyboardEvent) => {}
+  async mainEventHandler(e) {
+    // Determine appropriate screen
+    const screen = screens[this.gameState]
+    // If screen doesn't match, destory old screen, instantiate new screen
 
-  handleInGameInput = (e: KeyboardEvent) => {
-    try {
-      if (typeof this === 'undefined') return
-      const code = e.code
-
-      if (!(code in DIRECTION_KEY_MAP)) {
-        return
-      }
-
-      const diff = ROT.DIRS[4][DIRECTION_KEY_MAP[code]]
-      // @ts-ignore
-      const new_x = this.player.x + diff[0]
-      // @ts-ignore
-      const new_y = this.player.y + diff[1]
-
-      const newKey = new_x + ',' + new_y
-      // @ts-ignore
-      if (!(newKey in this.levelMap)) {
-        return
-      }
-      // @ts-ignore
-      let a = new MovementAction(this.player, diff[0], diff[1])
-      a.perform()
-      // If action is successful, start engine again
-      this.engine.unlock()
-    } catch (error) {
-      this.errorHandler.handle(error)
-    }
-  }
-
-  handleSpawnInput = (e: KeyboardEvent) => {
-    try {
-      if (typeof this === 'undefined') return
-      const code = e.code
-
-      if (!(code in NUMBER_KEY_MAP)) {
-        return
-      }
-
-      const number = NUMBER_KEY_MAP[code]
-    } catch (error) {}
+    this.screen.handleEvent(e)
+    this.screen.render()
   }
 
   get isDebug(): boolean {

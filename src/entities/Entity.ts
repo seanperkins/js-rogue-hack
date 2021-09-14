@@ -2,7 +2,7 @@ import {cloneDeep} from 'lodash'
 
 import {BLACK} from '../constants'
 import {RenderOrder} from '../constants'
-import LevelMap from '../LevelMap'
+import LevelMap from '@screens/LevelMap'
 
 export default class Entity {
   char: string

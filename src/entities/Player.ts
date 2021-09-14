@@ -1,6 +1,6 @@
 import {LIGHT_GREEN, RenderOrder} from '@constants'
 import {Actor} from './'
-import LevelMap from '../LevelMap'
+import LevelMap from '../screens/LevelMap'
 import {HostileEnemy} from '@components'
 
 export default class Player extends Actor {

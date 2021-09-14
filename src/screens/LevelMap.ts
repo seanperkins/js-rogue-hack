@@ -1,16 +1,17 @@
 import * as ROT from 'rot-js'
-import {BLACK, GREEN, LIGHT_GREEN, YELLOW} from './constants/colors'
-
-import {Entity, Actor} from './entities/'
-import {floor, SHROUD, wall} from './TileTypes'
-import {createProcessEnemy} from './factories/enemies'
-import {drawFrame} from './utilities/display'
+import {BLACK, LIGHT_GREEN, NUMBER_KEY_MAP} from '@constants'
+import {DIRECTION_KEY_MAP} from '@constants'
+import {Entity, Actor} from '../entities'
+import {floor, SHROUD, wall} from '../TileTypes'
+import {createProcessEnemy} from '../factories/enemies'
+import {drawFrame} from '../utilities/display'
 import {Terminal, terminalTypes, terminalWeights} from '@entities'
 import {RenderOrder} from '@constants'
-import Game from './Game'
+import Game from '../Game'
 import {GameStuff, LevelConfig} from 'types'
+import Screen from 'screens/Screen'
 
-export default class LevelMap {
+export default class LevelMap extends Screen {
   game: Game
   engine: ROT.Engine
   scheduler: any
@@ -32,6 +33,7 @@ export default class LevelMap {
   cameraOffsetY: number = 0
 
   constructor(gameStuff: GameStuff, levelConfig: LevelConfig) {
+    super(gameStuff.game, 'LevelMap')
     this.game = gameStuff.game
     this.display = gameStuff.display
 
@@ -42,11 +44,19 @@ export default class LevelMap {
     this.cameraHeight = levelConfig.cameraHeight || 50
     this.cameraWidth = levelConfig.cameraHeight || 80
 
-    this.generate()
+    this.scheduler = new ROT.Scheduler.Speed()
+    this.engine = new ROT.Engine(this.scheduler)
+
+    this.init()
   }
   get levelMap() {
     return this
   }
+
+  init() {
+    this.generate()
+  }
+
   addEntity = (entity: Entity) => {
     this.entities.push(entity)
     // Actors should get added to the scheduler
@@ -64,6 +74,44 @@ export default class LevelMap {
     const key = `${x},${y}`
     if (this.tiles && key in this.tiles) {
       return this.tiles[key]['transparent']
+    }
+  }
+
+  playerTurn = () => {
+    this.engine.lock()
+    window.addEventListener('keyup', this)
+  }
+
+  handleEvent = (e: KeyboardEvent) => {
+    try {
+      if (typeof this === 'undefined') return
+      const code = e.code
+
+      if (!(code in DIRECTION_KEY_MAP)) {
+        return
+      }
+
+      const diff = ROT.DIRS[4][DIRECTION_KEY_MAP[code]]
+      // @ts-ignore
+      const new_x = this.player.x + diff[0]
+      // @ts-ignore
+      const new_y = this.player.y + diff[1]
+
+      const newKey = new_x + ',' + new_y
+      // @ts-ignore
+      if (!(newKey in this.levelMap)) {
+        return
+      }
+      // @ts-ignore
+      let a = new MovementAction(this.player, diff[0], diff[1])
+      a.perform()
+      // If action is successful, start engine again
+      this.engine.unlock()
+      this.display.clear()
+      this.levelMap.render()
+      this.game.log.render()
+    } catch (error) {
+      this.game.errorHandler.handle(error)
     }
   }
 
@@ -231,6 +279,21 @@ export default class LevelMap {
     } else if (newY + this.cameraHeight > this.height) {
       this.cameraOffsetY = this.height - this.cameraHeight
     }
+  }
+
+  setUpMap = () => {
+    // this.player = new Player(20, 20, this.levelMap)
+    // this.levelMap = new LevelMap(
+    //   {
+    //     game: this,
+    //     display: this.display,
+    //   },
+    //   {
+    //     width: 100,
+    //     height: 100,
+    //     entities: [this.player],
+    //   },
+    // )
   }
 
   generate() {

@@ -13,7 +13,8 @@
       "@constants": ["constants/index"],
       "@constants/*": ["constants/*"],
       "@factories/*": ["factories/*"],
-      "@utilities/*": ["utilities/*"]
+      "@utilities/*": ["utilities/*"],
+      "@screens/*": ["screens/*"]
     }
   }
 }

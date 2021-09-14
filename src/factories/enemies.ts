@@ -2,7 +2,7 @@ import {HostileEnemy} from '@components'
 import {RenderOrder} from '@constants'
 import {LIGHT_GREEN} from '../constants/colors'
 import {Actor} from '../entities/'
-import LevelMap from '../LevelMap'
+import LevelMap from '../screens/LevelMap'
 
 export const createProcessEnemy = (x: number, y: number, parent: LevelMap) =>
   new Actor(

@@ -113,12 +113,14 @@ export function drawWindow({
 }) {
   const f = fg || LIGHT_GREEN
   const b = bg || BLACK
+  const height = shadow ? h - 1 : h
+  const width = shadow ? w - 1 : w
 
-  drawFrame(display, h, w, x, y)
+  drawFrame(display, height, width, x, y)
   fillDisplay({
     display,
     h: 1,
-    w: w - 2,
+    w: width - 2,
     x: x + 1,
     y: y + 1,
     fg: f,
@@ -130,18 +132,18 @@ export function drawWindow({
     fillDisplay({
       display,
       h: 1,
-      w: w,
+      w: width,
       x: h + 1,
-      y: y + h,
+      y: y + height,
       fg: f,
       bg: b,
       char: '°',
     })
     fillDisplay({
       display,
-      h: h - 1,
+      h: width - 1,
       w: 1,
-      x: x + w,
+      x: x + width,
       y: y + 1,
       fg: f,
       bg: b,
@@ -150,9 +152,31 @@ export function drawWindow({
   }
 
   return {
-    w: w - 2,
-    h: h - 2,
+    w: w - 3,
+    h: h - 3,
     x: x + 1,
     y: y + 2,
   }
+}
+
+export function drawText({
+  display,
+  x,
+  y,
+  text,
+  maxWidth,
+  fg,
+  bg,
+}: {
+  display: Display
+  x: number
+  y: number
+  text: string
+  maxWidth?: number
+  fg?: string
+  bg?: string
+}) {
+  const f = fg || LIGHT_GREEN
+  const b = bg || BLACK
+  display.drawText(x, y, `%c{${f}}%b{${b}}${text}`, maxWidth)
 }
