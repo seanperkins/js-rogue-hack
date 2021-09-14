@@ -56,7 +56,7 @@ export default class StartScreen extends Screen {
   }
 
   newGame() {
-    this.game.gameState = GameState.Welcome
+    this.game.changeGameState(GameState.Welcome)
   }
 
   loadGame() {

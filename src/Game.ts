@@ -25,7 +25,7 @@ export default class Game {
   display: ROT.Display
   handlers: {[id: number]: (e: KeyboardEvent) => void} = {}
   player: Player
-  _gameState: GameState
+  gameState: GameState
   log: Log
   errorHandler: ErrorHandler
   screen: Screen
@@ -60,26 +60,22 @@ export default class Game {
 
     this.setHandlers()
 
-    this.gameState = GameState.Start
+    this.changeGameState(GameState.Start)
   }
 
   setHandlers() {
     window.addEventListener('keydown', this.mainEventHandler.bind(this))
   }
 
-  get gameState(): GameState {
-    return this._gameState
-  }
-
   // TODO: Switch this back to a function that can accept gameState and props/context
   // This way, we can pass something into the new screen
-  set gameState(gameState: GameState) {
-    this._gameState = gameState
+  changeGameState(gameState: GameState, props?: any) {
+    this.gameState = gameState
     if (this.screen) {
       this.screen.destroy()
     }
     const screen = screens[this.gameState]
-    this.screen = new screen(this)
+    this.screen = new screen(this, props)
     this.screen.render()
   }
 
