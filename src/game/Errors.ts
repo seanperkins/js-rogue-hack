@@ -1,4 +1,4 @@
-import Log from './Log'
+import Log from '../../old/game/Log'
 
 export class ErrorHandler {
   log: Log

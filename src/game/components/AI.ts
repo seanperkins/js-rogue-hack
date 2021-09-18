@@ -1,6 +1,6 @@
 import * as ROT from 'rot-js'
 
-import {Actor} from '@entities'
+import {Actor} from 'entities/'
 import {Action, MovementAction} from '../actions'
 import {NotImplementedError} from '../Errors'
 

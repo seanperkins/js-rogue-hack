@@ -42,10 +42,6 @@ export class ActionWithDirection extends Action {
 }
 
 export class MovementAction extends ActionWithDirection {
-  constructor(entity, dx, dy) {
-    super(entity, dx, dy)
-  }
-
   perform = () => {
     const [x, y] = this.destXY
 

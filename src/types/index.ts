@@ -1,17 +1,29 @@
-import * as ROT from 'rot-js'
+export type MessageType = 'error' | 'into'
 
-import Game from 'Game'
-import {Entity} from '@entities'
-
-export interface GameStuff {
-  game: Game
-  display: ROT.Display
+export type Message = {
+  text: string
+  type: MessageType
+  count: number
 }
 
-export interface LevelConfig {
+export type GameState = {
+  state: 'menu' | 'terminal' | 'level'
+}
+
+export interface Position {
+  x: number
+  y: number
+}
+
+export interface ShapeProps {
+  x: number
+  y: number
   width: number
   height: number
-  entities: Entity[]
-  cameraHeight?: number
-  cameraWidth?: number
+}
+
+export interface CharacterProps {
+  fg: string
+  bg: string
+  char: string
 }

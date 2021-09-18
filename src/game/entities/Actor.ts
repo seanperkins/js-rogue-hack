@@ -1,6 +1,6 @@
-import {Entity} from '@entities'
-import {RenderOrder} from '@constants'
-import {BaseAI} from '@components'
+import {Entity} from '.'
+import {RenderOrder} from '../../constants'
+import {BaseAI} from '../components'
 
 export default class Actor extends Entity {
   ai?: BaseAI

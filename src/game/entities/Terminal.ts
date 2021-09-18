@@ -1,6 +1,6 @@
-import {Entity} from '@entities'
-import {NetworkPort} from '@components'
-import {RenderOrder} from '@constants'
+import {Entity} from '.'
+import {NetworkPort} from '../components'
+import {RenderOrder} from '../../constants'
 
 export default class Terminal extends Entity {
   networkPort?: NetworkPort
@@ -19,6 +19,7 @@ export default class Terminal extends Entity {
     super(char, color, name, x, y, parent, blocksMovement, renderOrder)
 
     if (networkSecurity) {
+      // @ts-ignore
       this.networkPort = new NetworkPort(this, networkSecurity)
     }
   }

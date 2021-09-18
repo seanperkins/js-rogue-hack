@@ -1,20 +1,27 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "es6",
-    "sourceMap": true,
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
     "moduleResolution": "node",
-    "baseUrl": "./src",
-    "paths": {
-      "@components": ["components/index"],
-      "@components/*": ["components/*"],
-      "@entities": ["entities/index"],
-      "@entities/*": ["entities/*"],
-      "@constants": ["constants/index"],
-      "@constants/*": ["constants/*"],
-      "@factories/*": ["factories/*"],
-      "@utilities/*": ["utilities/*"],
-      "@screens/*": ["screens/*"]
-    }
-  }
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "src"
+, "old/index.ts", "old/game"  ],
+  "baseUrl": "src"
 }
