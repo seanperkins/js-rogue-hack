@@ -27,3 +27,13 @@ export interface CharacterProps {
   bg: string
   char: string
 }
+
+export interface GridTile {
+  char: string
+  fg: string
+  bg: string
+}
+
+export interface GridTiles {
+  [key: string]: GridTile
+}

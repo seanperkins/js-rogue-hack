@@ -3,6 +3,7 @@ import {Display} from 'rot-js'
 
 import {BLACK, LIGHT_GREEN} from '../constants'
 import TileSet from '../TileSet'
+import {GridTiles} from '../types'
 
 const DisplayContext = createContext(null)
 
@@ -159,6 +160,39 @@ export const DisplayContextProvider = function ({children}) {
     const b = bg || BLACK
     display.drawText(x, y, `%c{${f}}%b{${b}}${text}`, maxWidth)
   }
+
+  function drawGrid({
+    grid,
+    fg,
+    bg,
+  }: {
+    grid: GridTiles
+    fg?: string
+    bg?: string
+  }) {
+    const {height, width} = display.getOptions()
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        const tile = grid[`${x},${y}`]
+        if (tile) {
+          const foreground = tile.fg || fg
+          const background = tile.bg || bg
+          display.draw(x, y, tile.char, foreground, background)
+        }
+      }
+    }
+  }
+
+  function drawMatrix({matrix, x, y}) {
+    matrix.forEach((row, ry) => {
+      row.forEach((cell, rx) => {
+        if (Object.keys(cell).length) {
+          display.draw(rx + x, ry + y, cell.char, cell.fg, cell.bg)
+        }
+      })
+    })
+  }
+
   return (
     <DisplayContext.Provider
       value={{
@@ -167,6 +201,8 @@ export const DisplayContextProvider = function ({children}) {
         clearDisplay,
         fillDisplay,
         drawText,
+        drawGrid,
+        drawMatrix,
         clicked,
         mouseXY,
       }}
