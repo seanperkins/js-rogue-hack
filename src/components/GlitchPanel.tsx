@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {LIGHT_GREEN, BLACK} from '../constants'
 import {generateMatrix} from '../utilities/matrix'
-import {getRandomInt, randomCharCode} from '../utilities/random'
+import {getRandomInt, getRandomChar} from '../utilities/random'
 import useInterval from '../utilities/useInterval'
 import withDisplay from './WithDisplay'
 
@@ -35,7 +35,7 @@ function iterateMatrix(matrix: any[][], iteration: number) {
       const chance = getRandomInt(100)
       if (chance < 2) return
       newMatrix[y][x] = {
-        char: randomCharCode(),
+        char: getRandomChar(),
         fg: LIGHT_GREEN,
         bg: BLACK,
       }

@@ -1,5 +1,5 @@
 import GlitchPanel from '../components/GlitchPanel'
-import Text from '../components/Text'
+import GlitchText from '../components/GlitchText'
 import withDisplay from '../components/WithDisplay'
 
 function Terminal({display, clearDisplay, getCenter}) {
@@ -8,7 +8,7 @@ function Terminal({display, clearDisplay, getCenter}) {
   clearDisplay()
   return (
     <GlitchPanel x={x} y={y} width={width / 2} height={height / 2}>
-      <Text x={30} y={30} text="Welcome" fg={'red'} />
+      <GlitchText x={30} y={30} text="Welcome to the jungle" fg={'red'} />
     </GlitchPanel>
   )
 }
