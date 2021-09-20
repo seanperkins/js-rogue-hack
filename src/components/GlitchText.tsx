@@ -10,26 +10,54 @@ interface Props {
   fg?: string
   bg?: string
   maxWidth?: number
+  glitchLevel?: number
+  glitchFrequency?: number
 }
-function GlitchText({x, y, text, fg, bg, maxWidth}: Props) {
-  const [txt, setTxt] = useState(text.toUpperCase())
+function GlitchText({
+  x,
+  y,
+  text,
+  fg,
+  bg,
+  maxWidth,
+  glitchLevel,
+  glitchFrequency,
+}: Props) {
+  const [glitched, setGlitched] = useState(false)
   useEffect(() => {
-    setTxt(glitchText(text))
-    setTimeout(() => {
-      setTxt(text)
-    }, 1000)
-  }, [setTxt, text])
+    setGlitched(true)
+  }, [])
+  useEffect(() => {
+    let handle
+    if (!glitched) {
+      handle = setTimeout(
+        () => {
+          setGlitched(true)
+        },
+        glitchFrequency ? glitchFrequency * 1000 : 5000,
+      )
+    } else {
+      handle = setTimeout(() => {
+        setGlitched(false)
+      }, 500)
+    }
+    return () => clearTimeout(handle)
+  }, [glitched, glitchFrequency])
+
+  const txt = glitched ? glitchText(text, glitchLevel) : text
   return <Text x={x} y={y} text={txt} fg={fg} bg={bg} maxWidth={maxWidth} />
 }
 
 export default GlitchText
 
-function glitchText(text: string) {
+function glitchText(text: string, glitchLevel: number = 0.2) {
   // Iterate through text string
   let newText = ''
   for (let i = 0; i < text.length; i++) {
-    // If a random number is less than 0.1, add a random character
-    if (RNG.getUniform() < 0.4) {
+    // If a random number is less than glitchLevel, add a random character
+    if (text[i] === ' ') {
+      newText += ' '
+    } else if (RNG.getUniform() < glitchLevel) {
       newText += getRandomChar()
     } else {
       newText += text[i]

@@ -1,3 +1,4 @@
+import {debounce} from 'lodash'
 import {createContext, useEffect, useState} from 'react'
 import {Display} from 'rot-js'
 
@@ -19,6 +20,10 @@ declare global {
 
 export const DisplayContextProvider = function ({children}) {
   const [display, setDisplay] = useState<Display>(null)
+  const [displaySize, setDisplaySize] = useState<{
+    width: number
+    height: number
+  }>({width: 0, height: 0})
   const [clicked, setClicked] = useState<boolean>(false)
   const [mouseXY, setMouseXY] = useState<[number, number]>([null, null])
   // Run once on load to set the display
@@ -28,9 +33,13 @@ export const DisplayContextProvider = function ({children}) {
       return
     }
     const tileset = new TileSet('tileset')
+
+    const {width, height} = getDisplaySizeFromWindow(tileset)
+    setDisplaySize({width, height})
+
     const d = new Display({
-      width: 120,
-      height: 80,
+      width: width,
+      height: height,
       fontSize: 12,
       spacing: 0,
       layout: 'tile-gl',
@@ -47,24 +56,57 @@ export const DisplayContextProvider = function ({children}) {
     const canvas = d.getContainer()
     const gameContainer = document.getElementById('game')
     gameContainer.appendChild(canvas)
-    canvas.style.maxWidth = '100%'
-    const windowHeight = window.innerHeight
-    canvas.style.maxHeight = windowHeight + 'px'
 
     setDisplay(d)
     window.game.display = d
   }, [])
 
   useEffect(() => {
+    if (!display) {
+      return
+    }
+    const {width, height} = displaySize
+    const {width: currentWidth, height: currentHeight} = display.getOptions()
+    if (width !== currentWidth || height !== currentHeight) {
+      const tileset = new TileSet('tileset')
+      const d = new Display({
+        width: width,
+        height: height,
+        fontSize: 12,
+        spacing: 0,
+        layout: 'tile-gl',
+        tileColorize: true,
+        tileWidth: tileset.tileWidth,
+        tileHeight: tileset.tileHeight,
+        tileSet: tileset.tileSet,
+        tileMap: tileset.tileMap,
+        bg: BLACK,
+        fg: LIGHT_GREEN,
+      })
+
+      // Appending element and forcing it to be 100% of width
+      const canvas = d.getContainer()
+      const gameContainer = document.getElementById('game')
+      gameContainer.replaceChildren(canvas)
+
+      setDisplay(d)
+      window.game.display = d
+    }
+  }, [display, displaySize])
+
+  // Used for setting handlers for mouse events
+  useEffect(() => {
     if (!display) return
     const setHandlers = (canvas) => {
       canvas.addEventListener('click', onClick)
       canvas.addEventListener('mousemove', onMouseMove)
+      window.addEventListener('resize', debouncedOnResize)
     }
 
     const removeHandlers = (canvas) => {
       canvas.removeEventListener('click', onClick)
       canvas.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('resize', debouncedOnResize)
     }
 
     const onClick = (e) => {
@@ -76,6 +118,13 @@ export const DisplayContextProvider = function ({children}) {
       const xy = display.eventToPosition(e)
       setMouseXY(xy)
     }
+
+    const onResize = () => {
+      const tileset = new TileSet('tileset')
+      const {width, height} = getDisplaySizeFromWindow(tileset)
+      setDisplaySize({width, height})
+    }
+    const debouncedOnResize = debounce(onResize, 100)
 
     const canvas = display.getContainer()
     setHandlers(canvas)
@@ -94,6 +143,11 @@ export const DisplayContextProvider = function ({children}) {
     const h = height || 0
     const w = width || 0
     return [Math.floor(dw / 2 - w / 2), Math.floor(dh / 2 - h / 2)]
+  }
+
+  function getHalfSize() {
+    const {width, height} = display.getOptions()
+    return {width: Math.floor(width / 2), height: Math.floor(height / 2)}
   }
 
   // Clears the portion of the screen that matches the parameters
@@ -198,6 +252,7 @@ export const DisplayContextProvider = function ({children}) {
       value={{
         display,
         getCenter,
+        getHalfSize,
         clearDisplay,
         fillDisplay,
         drawText,
@@ -205,9 +260,18 @@ export const DisplayContextProvider = function ({children}) {
         drawMatrix,
         clicked,
         mouseXY,
+        displaySize,
       }}
     >
       {children}
     </DisplayContext.Provider>
   )
+}
+
+function getDisplaySizeFromWindow(tileset: TileSet) {
+  const windowWidth = window.innerWidth
+  const windowHeight = window.innerHeight
+  const width = Math.floor(windowWidth / tileset.tileWidth)
+  const height = Math.floor(windowHeight / tileset.tileHeight)
+  return {width, height}
 }

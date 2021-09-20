@@ -1,17 +1,23 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {LIGHT_GREEN, BLACK} from '../constants'
-import {generateMatrix} from '../utilities/matrix'
+import {generateMatrix, resizeMatrix} from '../utilities/matrix'
 import {getRandomInt, getRandomChar} from '../utilities/random'
 import useInterval from '../utilities/useInterval'
 import withDisplay from './WithDisplay'
 
-function GlitchPanel({x, y, height, width, drawMatrix, children}) {
-  const [matrix, setMatrix] = useState(generateMatrix(width, height, {}))
+function GlitchPanel({x, y, height, width, drawMatrix, displaySize, children}) {
+  const [matrix, setMatrix] = useState(
+    generateMatrix(Math.floor(width), Math.floor(height), {}),
+  )
   const [iteration, setIteration] = useState(0)
   useInterval(() => {
     setMatrix(iterateMatrix(matrix, iteration))
     setIteration(iteration + 1)
   }, 500)
+
+  useEffect(() => {
+    setMatrix(resizeMatrix(matrix, {width, height}))
+  }, [displaySize])
 
   drawMatrix({matrix, x, y})
   return (
