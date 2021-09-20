@@ -16,7 +16,7 @@ function Button({x, y, text, fg, bg, onClick, inner, mouseXY, clicked}) {
   const actualY = y + innerY
   const isOver = isMouseOver([actualX, actualY], mouseXY, [width, height])
 
-  if (isMouseOver && clicked) {
+  if (isOver && clicked) {
     onClick()
   }
 
