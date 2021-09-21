@@ -8,6 +8,7 @@
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
     "babel-plugin-const-enum": "^1.1.0",
+    "color": "3.0.0",
     "hoist-non-react-statics": "^3.3.2",
     "lodash": "^4.17.21",
     "react": "^17.0.2",

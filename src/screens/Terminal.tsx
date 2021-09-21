@@ -1,9 +1,35 @@
-import {text} from 'stream/consumers'
-import GlitchPanel from '../components/GlitchPanel'
+import {useEffect, useState} from 'react'
+import {RNG} from 'rot-js'
+import FallingCharacters from '../components/FallingCharacters'
 import GlitchText from '../components/GlitchText'
 import withDisplay from '../components/WithDisplay'
+import {GREEN} from '../constants'
+import {getRandomInt} from '../utilities/random'
 
 function Terminal({display, clearDisplay, getCenter, getHalfSize}) {
+  const [fallingLines, setFallingLines] = useState([])
+
+  useEffect(() => {
+    const fLines = []
+    for (let index = 0; index < display.getOptions().width; index++) {
+      const chance = RNG.getPercentage()
+      if (chance >= 80) {
+        fLines.push(
+          <FallingCharacters
+            key={index}
+            x={index}
+            y={0}
+            fg={GREEN}
+            maxHeight={display.getOptions().height}
+            speed={getRandomInt(10) || 1}
+          />,
+        )
+      }
+    }
+
+    setFallingLines(fLines)
+  }, [])
+
   const text =
     'Welcome to the jungle. This should also work with longer strings.'
   const {width, height} = getHalfSize()
@@ -12,9 +38,11 @@ function Terminal({display, clearDisplay, getCenter, getHalfSize}) {
     width: text.length > width ? width - 2 : text.length,
     height: 1,
   })
+
   clearDisplay()
   return (
-    <GlitchPanel x={x} y={y} width={width} height={height}>
+    <>
+      {fallingLines}
       <GlitchText
         x={textX}
         y={textY}
@@ -22,7 +50,7 @@ function Terminal({display, clearDisplay, getCenter, getHalfSize}) {
         fg={'red'}
         maxWidth={width - 2}
       />
-    </GlitchPanel>
+    </>
   )
 }
 
