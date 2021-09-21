@@ -1,7 +1,5 @@
-import Log from '../../old/game/Log'
-
 export class ErrorHandler {
-  log: Log
+  log: any
   constructor(log, isDebug = false) {
     this.log = log
     if (isDebug) {
