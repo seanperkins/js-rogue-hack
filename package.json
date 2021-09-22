@@ -2,6 +2,7 @@
   "name": "new",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://seanperkins.github.io/js-rogue-hack",
   "dependencies": {
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.9.1",
