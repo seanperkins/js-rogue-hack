@@ -27,6 +27,7 @@ function MatrixEffect({display}) {
     }
 
     setFallingLines(fLines)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return fallingLines
