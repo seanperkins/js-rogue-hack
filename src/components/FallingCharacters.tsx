@@ -19,6 +19,7 @@ function FallingCharacters({display, x, y, fg, maxHeight, char, speed}) {
       })
     }
     setCharacters(chars)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useInterval(

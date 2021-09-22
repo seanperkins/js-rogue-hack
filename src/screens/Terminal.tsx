@@ -1,57 +1,41 @@
-import {useEffect, useState} from 'react'
-import {RNG} from 'rot-js'
-import FallingCharacters from '../components/FallingCharacters'
-import GlitchText from '../components/GlitchText'
+import {useState} from 'react'
+import TypingText from '../components/TypingText'
 import withDisplay from '../components/WithDisplay'
-import {GREEN} from '../constants'
-import {getRandomInt} from '../utilities/random'
+import {LIGHT_GREEN} from '../constants'
 
 function Terminal({display, clearDisplay, getCenter, getHalfSize}) {
-  const [fallingLines, setFallingLines] = useState([])
+  const [line, setLine] = useState(0)
+  const text = [
+    'Oh good. You seem to have booted up.',
+    'Are you receiving my input?',
+    'I think there might an issue.',
+    'Can you try to reboot?',
+  ]
+  const {width} = display.getOptions()
 
-  useEffect(() => {
-    const fLines = []
-    for (let index = 0; index < display.getOptions().width; index++) {
-      const chance = RNG.getPercentage()
-      if (chance >= 80) {
-        fLines.push(
-          <FallingCharacters
-            key={index}
-            x={index}
-            y={0}
-            fg={GREEN}
-            maxHeight={display.getOptions().height}
-            speed={getRandomInt(10) || 1}
-          />,
-        )
-      }
+  function handleComplete() {
+    if (line < text.length - 1) {
+      setLine(line + 1)
     }
+  }
 
-    setFallingLines(fLines)
-  }, [])
-
-  const text =
-    'Welcome to the jungle. This should also work with longer strings.'
-  const {width, height} = getHalfSize()
-  const [x, y] = getCenter({width, height})
-  const [textX, textY] = getCenter({
-    width: text.length > width ? width - 2 : text.length,
-    height: 1,
+  const lines = text.map((textLine, i) => {
+    if (i > line) return null
+    return (
+      <TypingText
+        x={1}
+        y={1 + i * 2}
+        text={text[i]}
+        fg={LIGHT_GREEN}
+        maxWidth={width - 2}
+        glitched={true}
+        onComplete={handleComplete}
+      />
+    )
   })
 
   clearDisplay()
-  return (
-    <>
-      {fallingLines}
-      <GlitchText
-        x={textX}
-        y={textY}
-        text={text}
-        fg={'red'}
-        maxWidth={width - 2}
-      />
-    </>
-  )
+  return lines
 }
 
 export default withDisplay(Terminal)

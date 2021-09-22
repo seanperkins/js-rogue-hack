@@ -213,6 +213,12 @@ export const DisplayContextProvider = function ({children}) {
     const f = fg || LIGHT_GREEN
     const b = bg || BLACK
     display.drawText(x, y, `%c{${f}}%b{${b}}${text}`, maxWidth)
+    // Figure out how many lines the text will take up
+    if (maxWidth) {
+      return Math.ceil(text.length / maxWidth)
+    }
+    // Should only take up one if we don't define a max
+    return 1
   }
 
   function drawGrid({
