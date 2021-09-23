@@ -23,6 +23,7 @@ function Terminal({display, clearDisplay, getCenter, getHalfSize}) {
     if (i > line) return null
     return (
       <TypingText
+        key={i}
         x={1}
         y={1 + i * 2}
         text={text[i]}
