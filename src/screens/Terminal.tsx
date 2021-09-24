@@ -2,9 +2,11 @@ import {useState} from 'react'
 import TypingText from '../components/TypingText'
 import withDisplay from '../components/WithDisplay'
 import {LIGHT_GREEN} from '../constants'
+import useEventHandlers from '../utilities/useEventHandlers'
 
 function Terminal({display, clearDisplay}) {
   const [line, setLine] = useState(0)
+  const [forceComplete, setForceComplete] = useState(false)
   const text = [
     'Oh good. You seem to have booted up.',
     'Are you receiving my input?',
@@ -12,11 +14,16 @@ function Terminal({display, clearDisplay}) {
     'Can you try to reboot?',
   ]
   const {width} = display.getOptions()
+  useEventHandlers({onClick})
 
   function handleComplete() {
     if (line < text.length - 1) {
       setLine(line + 1)
     }
+  }
+
+  function onClick() {
+    setForceComplete(true)
   }
 
   const lines = text.map((textLine, i) => {
@@ -29,8 +36,9 @@ function Terminal({display, clearDisplay}) {
         text={textLine}
         fg={LIGHT_GREEN}
         maxWidth={width - 2}
-        glitched={true}
+        glitched={false}
         onComplete={handleComplete}
+        forceComplete={forceComplete}
       />
     )
   })

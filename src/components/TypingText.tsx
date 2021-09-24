@@ -16,6 +16,7 @@ interface TypingTextProps {
   speed?: number
   glitched?: boolean
   onComplete?: () => void
+  forceComplete?: boolean
 }
 
 function TypingText({
@@ -28,6 +29,7 @@ function TypingText({
   maxWidth,
   onComplete,
   glitched,
+  forceComplete,
 }: TypingTextProps) {
   const [displayText, setDisplayText] = useState('')
   const [timeoutHandle, setTimeoutHandle] = useState(null)
@@ -37,6 +39,9 @@ function TypingText({
 
   useEffect(() => {
     // Wait to type until the delay has passed
+    if (forceComplete) {
+      return
+    }
     setTimeoutHandle(
       setTimeout(() => {
         setDisplayText(text.substring(0, displayText.length + 1))
@@ -48,7 +53,9 @@ function TypingText({
   }, [])
 
   useEffect(() => {
-    if (complete) return
+    if (complete || forceComplete) {
+      clearTimeout(timeoutHandle)
+    }
     setTimeoutHandle(
       setTimeout(() => {
         if (text !== displayText) {
@@ -60,7 +67,20 @@ function TypingText({
         }
       }, speed || 150),
     )
-  }, [displayText, text, speed, onComplete, complete])
+    return clearTimeout(timeoutHandle)
+    // Can't include timoutHandle or it fires off too frequently
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayText, text, speed, onComplete, complete, forceComplete])
+
+  useEffect(() => {
+    if (!complete && forceComplete) {
+      clearTimeout(timeoutHandle)
+      setDisplayText(text)
+      setComplete(true)
+      if (onComplete) onComplete()
+    }
+    return clearTimeout(timeoutHandle)
+  }, [forceComplete, complete, text, onComplete, timeoutHandle])
 
   if (glitched) {
     return (

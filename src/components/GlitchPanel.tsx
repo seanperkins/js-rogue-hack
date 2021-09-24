@@ -17,7 +17,7 @@ function GlitchPanel({x, y, height, width, drawMatrix, displaySize, children}) {
 
   useEffect(() => {
     setMatrix(resizeMatrix(matrix, {width, height}))
-  }, [displaySize])
+  }, [displaySize, height, matrix, width])
 
   drawMatrix({matrix, x, y})
   return (
