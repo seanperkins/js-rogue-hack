@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react'
-import {BLACK, LIGHT_GREEN} from '../constants'
+import {useTheme} from '../contexts/ThemeContext'
 import {ShapeProps} from '../types'
 import Fill from './Fill'
 import Frame from './Frame'
@@ -25,8 +25,9 @@ function DisplayWindow({
   shadow,
   children,
 }: WindowProps) {
-  const foreground = fg || LIGHT_GREEN
-  const background = bg || BLACK
+  const {getBG, getFG} = useTheme()
+  const foreground = getFG(fg)
+  const background = getBG(bg)
 
   return (
     <Frame

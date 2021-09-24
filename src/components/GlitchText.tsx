@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import {RNG} from 'rot-js'
+import {useTheme} from '../contexts/ThemeContext'
 import {getRandomChar} from '../utilities/random'
 import Text from './Text'
 
@@ -24,6 +25,9 @@ function GlitchText({
   glitchFrequency,
 }: Props) {
   const [glitched, setGlitched] = useState(false)
+  const {getBG, getFG} = useTheme()
+  const foreground = getFG(fg)
+  const background = bg ? getBG(bg) : null
   useEffect(() => {
     setGlitched(true)
   }, [])
@@ -45,7 +49,16 @@ function GlitchText({
   }, [glitched, glitchFrequency])
 
   const txt = glitched ? glitchText(text, glitchLevel) : text
-  return <Text x={x} y={y} text={txt} fg={fg} bg={bg} maxWidth={maxWidth} />
+  return (
+    <Text
+      x={x}
+      y={y}
+      text={txt}
+      fg={foreground}
+      bg={background}
+      maxWidth={maxWidth}
+    />
+  )
 }
 
 export default GlitchText

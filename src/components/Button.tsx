@@ -1,5 +1,5 @@
 import {useEffect} from 'react'
-import {BLACK, LIGHT_GREEN} from '../constants'
+import {useTheme} from '../contexts/ThemeContext'
 import Text from './Text'
 import withDisplay from './WithDisplay'
 
@@ -8,8 +8,9 @@ function isMouseOver([x, y], [mx, my], [w, h]) {
 }
 
 function Button({x, y, text, fg, bg, onClick, inner, mouseXY, clicked}) {
-  const foreground = fg || BLACK
-  const background = bg || LIGHT_GREEN
+  const {getFG, getBG} = useTheme()
+  const foreground = getFG(fg)
+  const background = getBG(bg)
   const width = text.length
   const height = 1
   const {x: innerX, y: innerY, width: innerWidth} = inner
@@ -29,8 +30,8 @@ function Button({x, y, text, fg, bg, onClick, inner, mouseXY, clicked}) {
       x={actualX}
       y={actualY}
       text={text}
-      fg={isOver ? foreground : background}
-      bg={isOver ? background : foreground}
+      fg={isOver ? background : foreground}
+      bg={isOver ? foreground : background}
       maxWidth={innerWidth}
     />
   )

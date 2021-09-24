@@ -1,18 +1,34 @@
 import withDisplay from './WithDisplay'
 import chars from '../constants/characters'
-import {BLACK, LIGHT_GREEN} from '../constants'
 import {ShapeProps} from '../types'
 import React, {Fragment} from 'react'
 import {Display} from 'rot-js'
 import Text from './Text'
+import {useTheme} from '../contexts/ThemeContext'
 
 type FrameProps = ShapeProps & {
   children: React.ReactElement
   title?: string
   display: Display
+  fg?: string
+  bg?: string
 }
 
-function Frame({title, x, y, width, height, children, display}: FrameProps) {
+function Frame({
+  title,
+  x,
+  y,
+  width,
+  height,
+  fg,
+  bg,
+  children,
+  display,
+}: FrameProps) {
+  const {getBG, getFG} = useTheme()
+  const foreground = getFG(fg)
+  const background = getBG(bg)
+
   for (let w = 0; w < width; w++) {
     for (let h = 0; h < height; h++) {
       let char = ' '
@@ -31,7 +47,7 @@ function Frame({title, x, y, width, height, children, display}: FrameProps) {
         char = chars.horizontalLine // Horizontal
       }
       if (char !== ' ') {
-        display.draw(w + x, h + y, char, LIGHT_GREEN, BLACK) // Side
+        display.draw(w + x, h + y, char, foreground, background) // Side
       }
     }
   }

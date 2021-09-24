@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react'
+import {useTheme} from '../contexts/ThemeContext'
 import GlitchText from './GlitchText'
 
 import Text from './Text'
@@ -29,6 +30,8 @@ function TypingText({
   const [displayText, setDisplayText] = useState('')
   const [timeoutHandle, setTimeoutHandle] = useState(null)
   const [complete, setComplete] = useState(false)
+  const {getFG} = useTheme()
+  const foreground = getFG(fg)
 
   useEffect(() => {
     // Wait to type until the delay has passed
@@ -57,10 +60,18 @@ function TypingText({
   }, [displayText, text, speed, onComplete, complete])
   if (glitched) {
     return (
-      <GlitchText x={x} y={y} text={displayText} fg={fg} maxWidth={maxWidth} />
+      <GlitchText
+        x={x}
+        y={y}
+        text={displayText}
+        fg={foreground}
+        maxWidth={maxWidth}
+      />
     )
   }
-  return <Text x={x} y={y} fg={fg} text={displayText} maxWidth={maxWidth} />
+  return (
+    <Text x={x} y={y} fg={foreground} text={displayText} maxWidth={maxWidth} />
+  )
 }
 
 export default TypingText
