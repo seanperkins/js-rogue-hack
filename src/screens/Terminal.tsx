@@ -1,4 +1,5 @@
 import {useState} from 'react'
+import Button from '../components/Button'
 import TypingText from '../components/TypingText'
 import withDisplay from '../components/WithDisplay'
 import {LIGHT_GREEN} from '../constants'
@@ -24,6 +25,11 @@ function Terminal({display, clearDisplay}) {
 
   function onClick() {
     setForceComplete(true)
+    setLine(3)
+  }
+
+  function reboot() {
+    console.log('reboot')
   }
 
   const lines = text.map((textLine, i) => {
@@ -34,9 +40,8 @@ function Terminal({display, clearDisplay}) {
         x={1}
         y={1 + i * 2}
         text={textLine}
-        fg={LIGHT_GREEN}
         maxWidth={width - 2}
-        glitched={false}
+        glitched={true}
         onComplete={handleComplete}
         forceComplete={forceComplete}
       />
@@ -44,7 +49,14 @@ function Terminal({display, clearDisplay}) {
   })
 
   clearDisplay()
-  return lines
+  return (
+    <>
+      {lines}
+      {line >= 3 && (
+        <Button text="Reboot" x={1} y={10} onClick={reboot} inverted={true} />
+      )}
+    </>
+  )
 }
 
 export default withDisplay(Terminal)
