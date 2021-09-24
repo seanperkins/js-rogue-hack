@@ -1,13 +1,13 @@
-import {useEffect} from 'react'
 import {useTheme} from '../contexts/ThemeContext'
 import Text from './Text'
 import withDisplay from './WithDisplay'
+import useEventHandlers from '../utilities/useEventHandlers'
 
 function isMouseOver([x, y], [mx, my], [w, h]) {
   return mx >= x && mx <= x + w && my >= y && my <= y + h
 }
 
-function Button({x, y, text, fg, bg, onClick, inner, mouseXY, clicked}) {
+function Button({x, y, text, fg, bg, onClick, inner, mouseXY}) {
   const {getFG, getBG} = useTheme()
   const foreground = getFG(fg)
   const background = getBG(bg)
@@ -18,12 +18,11 @@ function Button({x, y, text, fg, bg, onClick, inner, mouseXY, clicked}) {
   const actualY = y + innerY
   const isOver = isMouseOver([actualX, actualY], mouseXY, [width, height])
 
-  useEffect(() => {
-    // Wrapping this in a useEffect because onClick may udate state
-    if (isOver && clicked) {
-      onClick()
-    }
-  })
+  const _onClick = (e) => {
+    // Only fire off the onClick if we are over this button
+    isOver && onClick(e)
+  }
+  useEventHandlers({onClick: _onClick})
 
   return (
     <Text

@@ -24,7 +24,6 @@ export const DisplayContextProvider = function ({children}) {
     width: number
     height: number
   }>({width: 0, height: 0})
-  const [clicked, setClicked] = useState<boolean>(false)
   const [mouseXY, setMouseXY] = useState<[number, number]>([null, null])
   // Run once on load to set the display
   useEffect(() => {
@@ -98,20 +97,13 @@ export const DisplayContextProvider = function ({children}) {
   useEffect(() => {
     if (!display) return
     const setHandlers = (canvas) => {
-      canvas.addEventListener('click', onClick)
       canvas.addEventListener('mousemove', onMouseMove)
       window.addEventListener('resize', debouncedOnResize)
     }
 
     const removeHandlers = (canvas) => {
-      canvas.removeEventListener('click', onClick)
       canvas.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('resize', debouncedOnResize)
-    }
-
-    const onClick = (e) => {
-      setClicked(true)
-      setTimeout(() => setClicked(false), 0)
     }
 
     const onMouseMove = (e) => {
@@ -264,7 +256,6 @@ export const DisplayContextProvider = function ({children}) {
         drawText,
         drawGrid,
         drawMatrix,
-        clicked,
         mouseXY,
         displaySize,
       }}
