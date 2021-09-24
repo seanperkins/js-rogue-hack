@@ -3,28 +3,39 @@ import Button from '../components/Button'
 import Window from '../components/DisplayWindow'
 import withDisplay from '../components/WithDisplay'
 import GameContext from '../contexts/GameContext'
+import {clearStorage, keyExists, loadFromStorage} from '../utilities/storage'
 
 const height = 20
 const width = 20
 
 function Menu({getCenter, clearDisplay}) {
-  const {game, setGame} = useContext(GameContext)
+  const {newGame, continueGame} = useContext(GameContext)
+
+  const existingGame = keyExists('game')
+
+  function handleNewGame() {
+    newGame()
+  }
+
+  function handleContinue() {
+    continueGame()
+  }
+
   clearDisplay()
 
   const buttons = [
     {
       label: 'New Game',
-      onClick: () => {
-        setGame({...game, state: 'terminal'})
-      },
-    },
-    {
-      label: 'Load Game',
-      onClick: () => {
-        console.log('Load Game')
-      },
+      onClick: handleNewGame,
     },
   ]
+
+  if (existingGame) {
+    buttons.unshift({
+      label: 'Continue',
+      onClick: handleContinue,
+    })
+  }
 
   const [x, y] = getCenter({width, height})
 

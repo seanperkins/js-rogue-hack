@@ -13,6 +13,8 @@ export default class TileSet {
       this.tileMap[key] = [pos[0] * this.tileWidth, pos[1] * this.tileHeight]
     })
     for (let i = 0; i < 256; i++) {
+      // NOTE: String.fromCharCode gets the codes but dev tools might show a blank key
+      // on the object. The key is actually there though.
       this.tileMap[String.fromCharCode(i)] = [
         (i % 16) * this.tileWidth,
         Math.floor(i / 16) * this.tileHeight,

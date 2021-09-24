@@ -1,3 +1,4 @@
+import {useEffect} from 'react'
 import {BLACK, LIGHT_GREEN} from '../constants'
 import Text from './Text'
 import withDisplay from './WithDisplay'
@@ -16,9 +17,12 @@ function Button({x, y, text, fg, bg, onClick, inner, mouseXY, clicked}) {
   const actualY = y + innerY
   const isOver = isMouseOver([actualX, actualY], mouseXY, [width, height])
 
-  if (isOver && clicked) {
-    onClick()
-  }
+  useEffect(() => {
+    // Wrapping this in a useEffect because onClick may udate state
+    if (isOver && clicked) {
+      onClick()
+    }
+  })
 
   return (
     <Text
