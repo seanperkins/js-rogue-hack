@@ -12,6 +12,9 @@ export default class TileSet {
       const pos = presetCharMap[key]
       this.tileMap[key] = [pos[0] * this.tileWidth, pos[1] * this.tileHeight]
     })
+    // HACK: We are getting a bug where we try to draw a charcode that is not
+    // in the tileMap. I can't seem to figure out why, so I am adding it for now.
+    this.tileMap[String.fromCharCode(924)] = [0, 0]
     for (let i = 0; i < 256; i++) {
       // NOTE: String.fromCharCode gets the codes but dev tools might show a blank key
       // on the object. The key is actually there though.

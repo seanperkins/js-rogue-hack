@@ -3,7 +3,7 @@ import Button from '../components/Button'
 import Window from '../components/DisplayWindow'
 import withDisplay from '../components/WithDisplay'
 import GameContext from '../contexts/GameContext'
-import {clearStorage, keyExists, loadFromStorage} from '../utilities/storage'
+import {keyExists} from '../utilities/storage'
 
 const height = 20
 const width = 20
@@ -11,6 +11,7 @@ const width = 20
 function Menu({getCenter, clearDisplay}) {
   const {newGame, continueGame} = useContext(GameContext)
 
+  // We can determine if they have played before by checking for save
   const existingGame = keyExists('game')
 
   function handleNewGame() {

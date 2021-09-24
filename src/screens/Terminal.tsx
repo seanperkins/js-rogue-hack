@@ -5,11 +5,13 @@ import {LIGHT_GREEN} from '../constants'
 
 function Terminal({display, clearDisplay, getCenter, getHalfSize}) {
   const [line, setLine] = useState(0)
+  // HACK: I have added an extra char at the end because its getting removed
+  // by the typing text component
   const text = [
-    'Oh good. You seem to have booted up.',
-    'Are you receiving my input?',
-    'I think there might an issue.',
-    'Can you try to reboot?',
+    'Oh good. You seem to have booted up. ',
+    'Are you receiving my input? ',
+    'I think there might an issue. ',
+    'Can you try to reboot? ',
   ]
   const {width} = display.getOptions()
 
