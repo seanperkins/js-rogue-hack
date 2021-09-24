@@ -3,15 +3,13 @@ import TypingText from '../components/TypingText'
 import withDisplay from '../components/WithDisplay'
 import {LIGHT_GREEN} from '../constants'
 
-function Terminal({display, clearDisplay, getCenter, getHalfSize}) {
+function Terminal({display, clearDisplay}) {
   const [line, setLine] = useState(0)
-  // HACK: I have added an extra char at the end because its getting removed
-  // by the typing text component
   const text = [
-    'Oh good. You seem to have booted up. ',
-    'Are you receiving my input? ',
-    'I think there might an issue. ',
-    'Can you try to reboot? ',
+    'Oh good. You seem to have booted up.',
+    'Are you receiving my input?',
+    'I think there might an issue.',
+    'Can you try to reboot?',
   ]
   const {width} = display.getOptions()
 
@@ -28,7 +26,7 @@ function Terminal({display, clearDisplay, getCenter, getHalfSize}) {
         key={i}
         x={1}
         y={1 + i * 2}
-        text={text[i]}
+        text={textLine}
         fg={LIGHT_GREEN}
         maxWidth={width - 2}
         glitched={true}

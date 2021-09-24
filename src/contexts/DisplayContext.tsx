@@ -111,7 +111,7 @@ export const DisplayContextProvider = function ({children}) {
 
     const onClick = (e) => {
       setClicked(true)
-      setTimeout(() => setClicked(false), 1)
+      setTimeout(() => setClicked(false), 0)
     }
 
     const onMouseMove = (e) => {

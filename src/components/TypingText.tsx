@@ -1,3 +1,5 @@
+// TODO: Complete line on click or keyboard input so you don't have to wait
+
 import {useEffect, useState} from 'react'
 import {useTheme} from '../contexts/ThemeContext'
 import GlitchText from './GlitchText'
@@ -52,12 +54,14 @@ function TypingText({
         if (text !== displayText) {
           setDisplayText(text.substring(0, displayText.length + 1))
         } else {
+          setDisplayText(text)
           setComplete(true)
           if (onComplete) onComplete()
         }
       }, speed || 150),
     )
   }, [displayText, text, speed, onComplete, complete])
+
   if (glitched) {
     return (
       <GlitchText
