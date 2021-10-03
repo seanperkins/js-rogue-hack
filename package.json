@@ -17,6 +17,7 @@
     "react-scripts": "4.0.3",
     "rot-js": "^2.2.0",
     "tiny-invariant": "^1.1.0",
+    "ts-node": "^10.2.1",
     "typescript": "^4.4.3",
     "web-vitals": "^1.0.1"
   },
